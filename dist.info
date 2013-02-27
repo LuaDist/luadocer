@@ -1,0 +1,93 @@
+type = "x86_64"
+arch = "Ubuntu"
+author = "Viliam Kubis, Ivan Šimko, Peter Kapec"
+depends = {
+[[lua ~> 5.1]],
+[[lualogging >= 1.1.3]],
+[[luafilesystem >= 1.2.1]],
+[[luapretty >= 0.1]],
+[[luametrics >= 0.1]],
+}
+
+desc = "LuaDocer is a documentation tool for Lua source code (enhanced LuaDoc)"
+version = "0.1"
+maintainer = "Peter Kapec"
+files = {
+Runtime = {
+[[bin/luadocer]],
+[[lib/lua/luadocer/util.lua]],
+[[lib/lua/luadocer/config.lua]],
+[[lib/lua/luadocer/lp.lua]],
+[[lib/lua/luadocer/taglet/standard/aliases.lua]],
+[[lib/lua/luadocer/taglet/standard/tags.lua]],
+[[lib/lua/luadocer/taglet/standard.lua]],
+[[lib/lua/luadocer/init.lua]],
+[[lib/lua/luadocer/doclet/raw.lua]],
+[[lib/lua/luadocer/doclet/formatter.lua]],
+[[lib/lua/luadocer/doclet/html.lua]],
+[[lib/lua/luadocer/doclet/html/table (Ivan Simko's conflicted copy 2011-04-28).lp]],
+[[lib/lua/luadocer/doclet/html/local.png]],
+[[lib/lua/luadocer/doclet/html/menu.lp]],
+[[lib/lua/luadocer/doclet/html/prettyprint.js]],
+[[lib/lua/luadocer/doclet/html/indexOfFunctions.css]],
+[[lib/lua/luadocer/doclet/html/file_listing.lp]],
+[[lib/lua/luadocer/doclet/html/luadoc.css]],
+[[lib/lua/luadocer/doclet/html/file.lp]],
+[[lib/lua/luadocer/doclet/html/table.lp]],
+[[lib/lua/luadocer/doclet/html/module.lp]],
+[[lib/lua/luadocer/doclet/html/module_hierarchy.lp]],
+[[lib/lua/luadocer/doclet/html/highcharts.js]],
+[[lib/lua/luadocer/doclet/html/global.png]],
+[[lib/lua/luadocer/doclet/html/functions_and_tables.lp]],
+[[lib/lua/luadocer/doclet/html/function_detail.lp]],
+[[lib/lua/luadocer/doclet/html/jquery.js]],
+[[lib/lua/luadocer/doclet/html/header.lp]],
+[[lib/lua/luadocer/doclet/html/function.lp]],
+[[lib/lua/luadocer/doclet/html/indexOfMetrics.lp]],
+[[lib/lua/luadocer/doclet/html/menu.js]],
+[[lib/lua/luadocer/doclet/html/footer.lp]],
+[[lib/lua/luadocer/doclet/html/list_of_modules.lp]],
+[[lib/lua/luadocer/doclet/html/list_of_files.lp]],
+[[lib/lua/luadocer/doclet/html/jquery-ui-1.8.11.custom.css]],
+[[lib/lua/luadocer/doclet/html/indexOfFunctions.lp]],
+[[lib/lua/luadocer/doclet/html/metrics/metrics_infoflow.lp]],
+[[lib/lua/luadocer/doclet/html/metrics/metrics_function.lp]],
+[[lib/lua/luadocer/doclet/html/metrics/metrics_module.lp]],
+[[lib/lua/luadocer/doclet/html/metrics/metrics_graphs.lp]],
+[[lib/lua/luadocer/doclet/html/metrics/metrics_variables.lp]],
+[[lib/lua/luadocer/doclet/html/metrics/metrics_LOC.lp]],
+[[lib/lua/luadocer/doclet/html/metrics/metrics_functions.lp]],
+[[lib/lua/luadocer/doclet/html/metrics/metrics_statements.lp]],
+[[lib/lua/luadocer/doclet/html/metrics/metrics_file.lp]],
+[[lib/lua/luadocer/doclet/html/metrics/metrics_cyclomatic.lp]],
+[[lib/lua/luadocer/doclet/html/metrics/metrics_halstead.lp]],
+[[lib/lua/luadocer/doclet/html/metrics/metrics_table.lp]],
+[[lib/lua/luadocer/doclet/html/jquery-ui.min.js]],
+[[lib/lua/luadocer/doclet/html/index.lp]],
+[[lib/lua/luadocer/doclet/debug.lua]],
+[[lib/lua/luadocer/io.lua]],
+}
+,
+Documentation = {
+[[share/luadocer/doc//us/examples.html]],
+[[share/luadocer/doc//us/email.png]],
+[[share/luadocer/doc//us/architecture.vsd]],
+[[share/luadocer/doc//us/architecture_h.png]],
+[[share/luadocer/doc//us/architecture.html]],
+[[share/luadocer/doc//us/license.html]],
+[[share/luadocer/doc//us/manual.html]],
+[[share/luadocer/doc//us/examples/lfs/lfs.luadoc]],
+[[share/luadocer/doc//us/architecture_v.png]],
+[[share/luadocer/doc//us/lua.png]],
+[[share/luadocer/doc//us/index.html]],
+}
+,
+Data = {
+[[share/luadocer/README]],
+}
+,
+}
+
+license = "The Kepler Project"
+name = "luadocer"
+url = "https://github.com/LuaDist/luadocer"

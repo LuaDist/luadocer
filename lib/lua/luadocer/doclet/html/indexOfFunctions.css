@@ -1,0 +1,33 @@
+#tabs {
+	margin-top: 50px;
+}
+
+.ui-tabs {
+	padding: 0px;
+
+}
+.ui-widget-header {
+	border: none;
+	--background: #E7E7E7;
+}
+.ui-corner-all {
+    -moz-border-radius: 0px 0px 0px 0px;
+}
+
+.ui-widget {
+	font-family: inherited;
+	font-size: 13px;
+}
+
+.ui-corner-top {
+    -moz-border-radius-topleft: 0px;
+    -moz-border-radius-topright: 0px;
+}
+
+.ui-widget-content a {
+    color: #004080;
+}
+
+.ui-tabs-nav {
+	height: 33px;
+}
