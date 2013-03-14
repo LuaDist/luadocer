@@ -287,11 +287,32 @@ end
 
 local function print_table(tbl)
 	for key,value in pairs(tbl) do
-		print(key," ",value);
+	--	print(key," ",value);
 		if(type(value)=="table") then 
 			print_table(value);
 		end
 	end
+end
+
+function strsplit(delimiter, text)
+  local list = {}
+  local pos = 1
+  if string.find("", delimiter, 1) then -- this would result in endless loops
+    error("delimiter matches empty string!")
+  end
+  while 1 do
+    local first, last = string.find(text, delimiter, pos)
+    if first then -- found?
+    if(string.sub(text, pos, first-1) ~='')then
+      table.insert(list, string.sub(text, pos, first-1))
+     end 
+      pos = last+1
+    else
+      table.insert(list, string.sub(text, pos))
+      break
+    end
+  end
+  return list
 end
 
 -----------------------------------------------------------------
@@ -318,7 +339,76 @@ function start (doc)
 		text=text:gsub("'","&#39;");
 		return text;
 	end;
+--KOSA----------helper for indexOfFunctions/Tables----------------------------------------------------------------------------------------------------
+	doc.pathprefix=function(paths)
+		local prefix
+		local newpref=''
+		for k,v in pairs(paths) do	
+			print('for  ' ..v.path )
+			if(prefix==nil)then
+				prefix = v.path
+				print(prefix)
+			elseif(prefix~=v.path)then
+				local i = 1
+				local split1 = {}
+				local split2 = {}
+				for _,split in pairs(strsplit('/',prefix))do
+					table.insert(split1,split)
+				end
+				for _,split in pairs(strsplit('/',v.path))do
+					table.insert(split2,split)
+				end
+				if(#split1 > #split2)then
+					for index,str in pairs(split2) do
+					print("for1")
+					print(str)
+						if(split1[index]==str)then
+							if(newpref=='')then
+								newpref = '/' .. str
+							else
+								newpref = newpref  .. '/' .. str							
+							end
+							
+						else
+							break
+						end
+					end
+				else
+					for index,str in pairs(split1) do
+					print("for2")
+					print(str)
+						if(split2[index]==str)then
+							if(newpref=='')then
+								newpref = '/' .. str
+							else
+								newpref = newpref  .. '/' ..  str
+							end
+						else
+							break
+						end
+					end
+				
+				end
+		print("new" .. newpref)
+		print("old" .. prefix)
 
+				prefix = newpref			
+				newpref=''
+			end
+		end
+
+		return prefix
+	end;
+	
+	doc.pathsuffix=function(common,full)
+		local suffix
+		if(full == common)then
+			return ''
+		end
+		suffix = string.sub(full,string.len(common)+1)
+		return suffix
+	end;
+-------------------------------------------------------------------	
 	-- Generate index file
 	if (#doc.files > 0 or #doc.modules > 0) and (not options.noindexpage) then
 		local filename = options.output_dir.."index.html"
@@ -401,8 +491,10 @@ function start (doc)
 	local metricsAST_results = {}
 		
 	for _, filepath in ipairs(doc.files) do
+		
 		local text = pkio.ReadFile(filepath)
 		local formatted_text = formatter.format_text(text);
+
 		-- potrebne nahradit windows newlines za unix newlines, inak dvojite nove riadky!! [LEG zoberie ako SPACE separatne \r aj \n, moderne browsery ciste \r interpretuju ako newline -> dvojite nove riadky]
 		formatted_text=formatted_text:gsub("\r\n","\n");
 		local AST = metrics.processText(formatted_text)
@@ -509,6 +601,20 @@ function start (doc)
 	include("indexOfMetrics.lp", { doc = doc, metrics = globalMetrics, modulenum = #doc.modules , filenum = #doc.files } ) -- MODIF (Ivan Simko) - added globalMetrics
 	f:close()
 	-- \\\ MODIFICATION ///
+
+
+	-- /// MODIFICATION \\\
+	-- TABLES
+	local tables = { name = "index.html" }
+	local f = lfs.open(options.output_dir.."tablelist/index.html", "w")
+	assert(f, string.format("could not open tablelist/index.html for writing"))
+	io.output(f)
+	include("indexOfTables.lp", { doc = doc, tables = tables, metrics = globalMetrics} )
+	f:close()
+	-- \\\ MODIFICATION ///
+
+
+
 	
 	-- copy extra files
 	file_copy("luadoc.css");
