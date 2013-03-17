@@ -154,7 +154,7 @@ local extra_css = {'jquery-ui-1.8.11.custom.css','indexOfFunctions.css'}
 			<%	for filename, AST in pairs(metrics.file_AST_list) do %>
 				<li>
 					<a href="#" class='toggler' onclick="return menu_toggle(this);">[+]</a> 
-					<a href="<%=luadoc.doclet.html.file_link(filename,"functionlist/index.html")%>"><%=filename%></a>
+					<a href="<%=luadoc.doclet.html.file_link(filename,"functionlist/index.html")%>"><%=' .' .. doc.pathsuffix(commonpath,filename)%></a>
 					<ul style="list-style-type: none;">
 						<% drawTree(AST, filename) %>
 					</ul>
