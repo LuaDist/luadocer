@@ -31,6 +31,8 @@ local pkio = require ('luadocer.io')
 local metrics = require 'metrics.init'
 if (type(metrics) ~= 'table') then metrics = require 'metrics' end
 
+local literate = require 'literate'
+
 --[[
 local metrics_loader = loadstring('require("metrics")');
 local metrics=pcall(metrics_loader);
@@ -469,7 +471,8 @@ function start (doc)
 					f:close()
 				end
 			end
-			
+
+                        file_doc['literate'] = literate.literate(highlighter_pt)
 			
 			for _, funcinfo in pairs({}) do -- not working!! functionlister.getTableOfFunctions(text,true)) do		-- appendinf function informations to the tableOfFunctions
 				funcinfo.path = filepath													-- set path
@@ -489,6 +492,8 @@ function start (doc)
 			-- call the file template
 			include("file.lp", {doc = doc, file_doc = file_doc, globalMetrics = globalMetrics} )
 			f:close()
+
+                        literate.dumpTree(highlighter_pt)
 		end
 	end
 	

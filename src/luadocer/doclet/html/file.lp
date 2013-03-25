@@ -45,6 +45,13 @@ luadoc.doclet.html.include("header.lp", {title=file_doc.file_name, doc=doc, file
 <%=file_doc.prettyprint%>
 </div>
 
+<% if file_doc.literate then %>
+<h2 class='summary'>Literate doc</h2>
+<div class='literate_doc'>
+<%=file_doc.literate%>
+</div>
+<% end %>
+
 <script type='text/javascript'>
 	$(document).ready(function(){
 		$('#content .metrics_wrapper, #content dl.function, #content dl.table').hide();

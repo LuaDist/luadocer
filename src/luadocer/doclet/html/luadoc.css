@@ -482,6 +482,24 @@ pre.highlighted_code .symbol {
 	background-color:#FF9009;
 }
 
+/* literate_doc */
+
+.literate_doc td{
+        vertical-align:top;
+}
+
+.literate_doc tr:hover td{
+        background-color:#F5F5F5;
+}
+
+.literate_doc tr td:nth-child(1){
+    padding:0 10px;
+}
+
+.literate_doc tr td:nth-child(2){
+    padding-left:10px;
+}
+
 
 /* function show / hide source code link */
 a.toggle_source {
