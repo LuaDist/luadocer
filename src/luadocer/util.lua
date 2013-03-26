@@ -4,7 +4,8 @@
 -------------------------------------------------------------------------------
 
 local lfs = require("lfs")
-local type, table, string, io, assert, tostring, setmetatable, pcall = type, table, string, io, assert, tostring, setmetatable, pcall
+local re = require("re")
+local type, table, string, io, assert, tostring, setmetatable, pcall,print = type, table, string, io, assert, tostring, setmetatable, pcall,print
 
 -------------------------------------------------------------------------------
 -- Module with several utilities that could not fit in a specific module
@@ -214,6 +215,10 @@ function getabsolutepath(n)
 	local real_path=''
 	if(isrelative(n)) then
 		
+		if(n:match(".")~="/") then 		--prvy znak nie je / => path nie je absolutna
+			real_path = lfs.currentdir()
+		end
+
 		
 		for v in string.gmatch(n,"[^/]+") do
 			if(v =="..") then 
@@ -225,6 +230,7 @@ function getabsolutepath(n)
 			end
 
 		end
+	lfs.chdir(original_path)
 
 		return (string.gsub(real_path,"[/]+",'/'))		--replace multi-slahes with one simple slash. like : /////    ->  /
 	end
