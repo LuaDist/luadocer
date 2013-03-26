@@ -4,7 +4,7 @@
 -------------------------------------------------------------------------------
 
 require "luadocer.init"
-
+local util=require("luadocer.util")
 -------------------------------------------------------------------------------
 -- Print version number.
 
@@ -98,7 +98,8 @@ local function process_options (arg)
 	while i < #arg or i == #arg do
 		local argi = arg[i]
 		if string.sub (argi, 1, 1) ~= '-' then
-			table.insert (files, argi)
+--KOSA
+			table.insert (files, util.getabsolutepath(argi))
 		else
 			local opt = string.sub (argi, 2)
 			if string.sub (opt, 1, 1) == '-' then
