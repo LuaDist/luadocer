@@ -199,3 +199,37 @@ function loadlogengine(options)
 	return logger
 end
 
+--KOSA____________________________________
+local function isrelative(p)
+	if(p:match(".")~="/" or p:match("/%.%.?/")) then
+		return true
+	end
+	return false
+end
+
+
+function getabsolutepath(n)			
+	local original_path = lfs.currentdir()
+
+	local real_path=''
+	if(isrelative(n)) then
+		
+		
+		for v in string.gmatch(n,"[^/]+") do
+			if(v =="..") then 
+				real_path = real_path .. "/\.\."
+ 				lfs.chdir(real_path)				
+				real_path =lfs.currentdir()
+			elseif(v~=".") then
+				real_path = real_path .. "/" ..  v
+			end
+
+		end
+
+		return (string.gsub(real_path,"[/]+",'/'))		--replace multi-slahes with one simple slash. like : /////    ->  /
+	end
+	lfs.chdir(original_path)	
+	return (string.gsub(n,"[/]+",'/'))
+end
+--___________________________________________
+
