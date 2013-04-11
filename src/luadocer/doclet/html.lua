@@ -32,6 +32,7 @@ local metrics = require 'metrics.init'
 if (type(metrics) ~= 'table') then metrics = require 'metrics' end
 
 local literate = require 'literate'
+local comments = require 'comments'
 
 --[[
 local metrics_loader = loadstring('require("metrics")');
@@ -472,7 +473,9 @@ function start (doc)
 				end
 			end
 
-                        file_doc['literate'] = literate.literate(highlighter_pt)
+			local comment_tagged_pt = comments.extendAST(highlighter_pt)
+
+            file_doc.literate = literate.literate(comment_tagged_pt)
 			
 			for _, funcinfo in pairs({}) do -- not working!! functionlister.getTableOfFunctions(text,true)) do		-- appendinf function informations to the tableOfFunctions
 				funcinfo.path = filepath													-- set path
@@ -492,8 +495,6 @@ function start (doc)
 			-- call the file template
 			include("file.lp", {doc = doc, file_doc = file_doc, globalMetrics = globalMetrics} )
 			f:close()
-
-                        literate.dumpTree(highlighter_pt)
 		end
 	end
 	

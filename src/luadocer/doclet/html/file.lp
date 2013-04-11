@@ -39,11 +39,11 @@ luadoc.doclet.html.include("header.lp", {title=file_doc.file_name, doc=doc, file
 <br />
 <% luadoc.doclet.html.include("functions_and_tables.lp", {doc=doc, file_doc=file_doc, globalMetrics = globalMetrics}) %>
 <br />
-<h2 class='summary'>Pretty printed <%= doc.sh(file_doc.name:match("[^\/]+$")) %></h2>
+<!--<h2 class='summary'>Pretty printed <%= doc.sh(file_doc.name:match("[^\/]+$")) %></h2>
 <script type='text/javascript' src="<%=luadoc.doclet.html.link("prettyprint.js", "files/"..file_doc.name)%>"></script>
 <div class='pretty_printer'>
 <%=file_doc.prettyprint%>
-</div>
+</div>-->
 
 <% if file_doc.literate then %>
 <h2 class='summary'>Literate doc</h2>
