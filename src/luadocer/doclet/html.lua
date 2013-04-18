@@ -517,6 +517,7 @@ function start (doc)
 	-- \\\ MODIFICATION ///
 	
 	-- copy extra files
+	file_copy("literate.js")
 	file_copy("luadoc.css");
 	file_copy("jquery.js");
 	file_copy("prettyprint.js");

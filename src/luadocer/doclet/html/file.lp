@@ -7,7 +7,7 @@ for w in file_doc.name:gmatch("[^/]+") do
 	table.insert(location,{w,luadoc.doclet.html.link("files/"..cw:sub(0,-2).."/file_listing.lua.lua.lua.html","files/"..file_doc.name)});
 end
 location[#location][2]=file_doc.file_name:gsub("%.lua$",".html"):gsub("%.luadoc$",".html");
-luadoc.doclet.html.include("header.lp", {title=file_doc.file_name, doc=doc, file_doc=file_doc, location=location, extra_javascript = {'highcharts.js'}}) %>
+luadoc.doclet.html.include("header.lp", {title=file_doc.file_name, doc=doc, file_doc=file_doc, location=location, extra_javascript = {'highcharts.js', 'literate.js'}}) %>
 <h1>File <code><%=doc.sh(file_doc.name)%></code></h1>
 
 <%if file_doc.description then%>

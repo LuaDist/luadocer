@@ -521,6 +521,10 @@ div.function_detail h3 {
 	overflow-x: scroll;
 }
 
+.literate_doc table{
+	border-spacing: 0;
+}
+
 .literate_doc td{
         vertical-align:top;
 }
@@ -528,12 +532,15 @@ div.function_detail h3 {
 .literate_doc .docs{
 	font-family: serif;
 	font-size: 10pt;
-	padding-top: 10px;
-	padding-right: 10px;
+	padding: 10px 10px 0 10px;
 }
 
 .literate_doc .docs p:first-child{
 	margin-top: 0;
+}
+
+.literate_doc .docs p{
+	margin-left: 0 !important;
 }
 
 .literate_doc .code{
@@ -544,4 +551,29 @@ div.function_detail h3 {
 
 .literate_doc .code pre{
 	font-size: 8pt;
+}
+
+.literate_doc tr.block_highlight > td:first-child{
+	border-left:1px dotted #555;
+	padding-left:9px;
+}
+
+.literate_doc tr.block_highlight > td{
+	background-color: #f9f9f9;
+}
+
+.literate_doc tr.folder{
+	display:none;
+}
+
+.literate_doc tr.folder td{
+	border-top:3px double #aaaaaa;
+	border-bottom:3px double #aaaaaa;
+	padding-bottom: 10px;
+}
+
+.literate_doc tr.folder td:last-child{
+	color:#ccc;
+	font-size:0.8em;
+	padding-top:10px;
 }
