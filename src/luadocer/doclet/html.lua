@@ -415,10 +415,22 @@ function start (doc)
 		file_doc.formatted_text = formatted_text;
 			
 		metricsAST_results[filepath] = AST
+
+		comments.extendAST(AST)
 	end
 	--MODIFICATION ///
 	
 	local globalMetrics = metrics.doGlobalMetrics(metricsAST_results)
+
+	--_ listOfFunctions is globalMetrics.functionDefinitions table converted to associative array
+	local listOfFunctions = {}
+
+	for _,fun in ipairs(globalMetrics.functionDefinitions) do
+		fun.docstring = comments.findDocstring(fun)
+		listOfFunctions[fun.name] = fun
+	end
+
+	literate.functions = listOfFunctions
 
 	-- Process modules
 	if not options.nomodules then
@@ -473,9 +485,8 @@ function start (doc)
 				end
 			end
 
-			local comment_tagged_pt = comments.extendAST(highlighter_pt)
-
-            file_doc.literate = literate.literate(comment_tagged_pt)
+			literate.filename = file_doc.name
+            file_doc.literate = literate.literate(file_doc.metricsAST)
 			
 			for _, funcinfo in pairs({}) do -- not working!! functionlister.getTableOfFunctions(text,true)) do		-- appendinf function informations to the tableOfFunctions
 				funcinfo.path = filepath													-- set path
