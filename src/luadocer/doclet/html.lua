@@ -339,17 +339,16 @@ function start (doc)
 		text=text:gsub("'","&#39;");
 		return text;
 	end;
---KOSA----------helper for indexOfFunctions/Tables----------------------------------------------------------------------------------------------------
+--KOSA
+---
+-- Helper for indexOfFunctions/Tables
 	doc.pathprefix=function(paths)
 		local prefix
 		local newpref=''
 		for k,v in pairs(paths) do	
-			print('for  ' ..v.path )
 			if(prefix==nil)then
 				prefix = v.path
-				print(prefix)
 			elseif(prefix~=v.path)then
-				local i = 1
 				local split1 = {}
 				local split2 = {}
 				for _,split in pairs(strsplit('/',prefix))do
@@ -360,8 +359,6 @@ function start (doc)
 				end
 				if(#split1 > #split2)then
 					for index,str in pairs(split2) do
-					print("for1")
-					print(str)
 						if(split1[index]==str)then
 							if(newpref=='')then
 								newpref = '/' .. str
@@ -375,8 +372,6 @@ function start (doc)
 					end
 				else
 					for index,str in pairs(split1) do
-					print("for2")
-					print(str)
 						if(split2[index]==str)then
 							if(newpref=='')then
 								newpref = '/' .. str
@@ -389,9 +384,6 @@ function start (doc)
 					end
 				
 				end
-		print("new" .. newpref)
-		print("old" .. prefix)
-
 				prefix = newpref			
 				newpref=''
 			end
@@ -399,10 +391,11 @@ function start (doc)
 
 		return prefix
 	end;
-	
+---
+-- Helper for indexOfFunctions/	
 	doc.pathsuffix=function(common,full)
 		local suffix
-		if(full == common)then
+		if(full == common or common==nil)then
 			return ''
 		end
 		suffix = string.sub(full,string.len(common)+1)
@@ -593,6 +586,7 @@ function start (doc)
 	io.output(f)
 	include("indexOfFunctions.lp", { doc = doc, functions = functions, metrics = globalMetrics} ) -- -- MODIF (Ivan Simko) - added globalMetrics
 	f:close()
+	
 	-- METRICS
 	local metrics = { name = "index.html" }
 	local f = lfs.open(options.output_dir.."metrics/index.html", "w")
@@ -613,6 +607,15 @@ function start (doc)
 	f:close()
 	-- \\\ MODIFICATION ///
 
+--KOSA
+	-- custom comments
+	local tables = { name = "customs.html" }
+	local f = lfs.open(options.output_dir.."customcommentlist/customs.html", "w")
+	assert(f, string.format("could not open customcommentlist/customs.html for writing"))
+	io.output(f)
+	include("custom.lp", { doc = doc,tables=tables, metrics = globalMetrics} )
+	f:close()
+	-- \\\ MODIFICATION ///
 
 
 	
