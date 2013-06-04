@@ -19,6 +19,7 @@ if globalMetrics then
 	
 	if (moduleNode) then%>
 		<div style="float: left; width: 330px;">
+			<%--[[=luadoc.doclet.html.include("metrics/metrics_document.lp", { documentMetrics = moduleNode.documentMetrics})]]%>
 			<%=luadoc.doclet.html.include("metrics/metrics_LOC.lp", { LOC = moduleNode.LOC })%>
 			<br />
 			<table class="metric_index">
@@ -64,7 +65,7 @@ if globalMetrics then
 				if (moduleName == currentModuleName) then
 					for funName, count in pairs(funCall) do	%>
 						<tr>
-							<td><%=AST.metrics.currentModuleName or filename%></td>
+							<td><%=(AST.metrics.currentModuleName or fileName)%></td>
 							<td><%=funName%></td>
 							<td><%=count%></td>
 						</tr>	
