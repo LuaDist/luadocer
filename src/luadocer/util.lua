@@ -200,7 +200,11 @@ function loadlogengine(options)
 	return logger
 end
 
---KOSA____________________________________
+---
+--% Check if path is relative
+--autor KOSA
+--@ p (string) path string
+--: (bool) true or false
 local function isrelative(p)
 	if(p:match(".")~="/" or p:match("/%.%.?/")) then
 		return true
@@ -208,7 +212,11 @@ local function isrelative(p)
 	return false
 end
 
-
+---
+--% Converts the path string to absoluthe path
+--autor KOSA
+--@ n (string) path string
+--: (string) absoluthe path
 function getabsolutepath(n)			
 	local original_path = lfs.currentdir()
 
