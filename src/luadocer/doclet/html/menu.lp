@@ -103,7 +103,9 @@ end
 <ul>
 	<li><a href="<%=luadoc.doclet.html.link("index.html", from)%>">Index</a></li>
 	<li><a href="<%=luadoc.doclet.html.link("functionlist/index.html", from)%>">List of functions</a></li>
+	<li><a href="<%=luadoc.doclet.html.link("tablelist/index.html", from)%>">List of tables</a></li>
 	<li><a href="<%=luadoc.doclet.html.link("metrics/index.html", from)%>">Project metrics</a></li>
+	<li><a href="<%=luadoc.doclet.html.link("customcommentlist/customs.html",from)%>">Informational comments</a></li>
 </ul>
 
 
@@ -123,6 +125,5 @@ end
 <%hierarchy_menu(file_doc,doc.files,"/",nil);%>
 </ul>
 <%end%>
-
 
 
