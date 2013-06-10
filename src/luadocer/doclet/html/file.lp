@@ -1,5 +1,5 @@
 <%
-local extra_javascript = {'highcharts.js', 'literate.js', 'jquery-ui.min.js'}
+local extra_javascript = {'highcharts.js', 'literate.js', 'jquery-ui.min.js'} --MODIFIED BY: Michal Juranyi :: Added literate.js
 local extra_css = {'jquery-ui-1.8.11.custom.css','indexOfFunctions.css'}
 local location={{"Files",luadoc.doclet.html.link("list_of_files.html","files/"..file_doc.name)}}
 local cw=""
@@ -40,6 +40,7 @@ luadoc.doclet.html.include("header.lp", {title=file_doc.file_name, doc=doc, file
 <br />
 <% luadoc.doclet.html.include("functions_and_tables.lp", {doc=doc, file_doc=file_doc, globalMetrics = globalMetrics}) %>
 <br />
+<!-- MODIFIED BY: Michal Juranyi :: Tabbed layout and fullscreen -->
 <div id="tabs">
 
 	<ul>
@@ -47,8 +48,10 @@ luadoc.doclet.html.include("header.lp", {title=file_doc.file_name, doc=doc, file
         <li><a href="#fragment-2"><span>Pretty printed</span></a></li>
     </ul>
 
-	<div id="fragment-1">
+	<div id="fragment-1" class="lp-panel">
 		<% if file_doc.literate then %>
+		<a href="#" id="fullscreen-button">Fullscreen</a>
+		<a href="#" class="lp-toggle-api">Show/Hide API comments</a>
 		<div class='literate_doc'>
 		<%=file_doc.literate%>
 		</div>
@@ -64,10 +67,22 @@ luadoc.doclet.html.include("header.lp", {title=file_doc.file_name, doc=doc, file
 	</div>
 </div>
 
+<% if file_doc.literate then %>
+<div id="literate-fullscreen">
+	<a href="#" class="exit-fullscreen">Exit fullscreen</a>
+	<a href="#" class="lp-toggle-api">Show/Hide API comments</a>
+	<div class="scroll-wrapper">
+	
+	</div>
+</div>
+<% end %>
+<!-- END OF MODIFICATIONS BY MJ -->
+<div>
+
 <script type='text/javascript'>
 	$(document).ready(function(){
 		$('#content .metrics_wrapper, #content dl.function, #content dl.table').hide();
-		$("#tabs").tabs();
+		$("#tabs").tabs(); // MODIFIED BY: Michal Juranyi
 	});
 </script>
 

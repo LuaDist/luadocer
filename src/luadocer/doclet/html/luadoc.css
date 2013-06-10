@@ -516,7 +516,7 @@ div.function_detail h3 {
 	display:none;
 }
 
-/* Literate Doc styles */
+/* Literate Doc styles by Michal Juranyi */
 .literate_doc{
 	overflow-x: scroll;
 }
@@ -526,12 +526,13 @@ div.function_detail h3 {
 }
 
 .literate_doc td{
-        vertical-align:top;
+    vertical-align:top;
 }
 
 .literate_doc .docs{
 	font-family: serif;
 	font-size: 10pt;
+	line-height: 1.5em;
 	padding: 10px 10px 0 10px;
 }
 
@@ -551,6 +552,11 @@ div.function_detail h3 {
 
 .literate_doc .code pre{
 	font-size: 8pt;
+}
+
+#literate-fullscreen .literate_doc tr.block_highlight > td:first-child{
+	border-left:3px dotted #555;;
+	padding-left:7px;
 }
 
 .literate_doc tr.block_highlight > td:first-child{
@@ -576,4 +582,44 @@ div.function_detail h3 {
 	color:#ccc;
 	font-size:0.8em;
 	padding-top:10px;
+}
+
+.literate_doc tr.api td.docs{
+	border-top:3px double #aaaaaa;
+}
+
+#literate-fullscreen{
+	background-color: #fff;
+	position: fixed;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	display: none;
+}
+
+#literate-fullscreen .literate_doc{
+	overflow: visible;
+}
+
+#literate-fullscreen .literate_doc .docs{
+	min-width:400px;
+}
+
+#literate-fullscreen .scroll-wrapper{
+	overflow: scroll;
+	position: absolute;
+	top:40px;
+	left:0;
+	right:0;
+	bottom:0;
+}
+
+#literate-fullscreen > a{
+	line-height: 40px;
+	margin-left: 2em;
+}
+
+.lp-panel > a{
+	margin-right: 2em;
 }
