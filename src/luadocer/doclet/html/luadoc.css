@@ -482,7 +482,6 @@ pre.highlighted_code .symbol {
 	background-color:#FF9009;
 }
 
-
 /* function show / hide source code link */
 a.toggle_source {
 	font-weight:normal;
@@ -515,4 +514,112 @@ div.function_detail h3 {
 }
 .metrics_wrapper br {
 	display:none;
+}
+
+/* Literate Doc styles by Michal Juranyi */
+.literate_doc{
+	overflow-x: scroll;
+}
+
+.literate_doc table{
+	border-spacing: 0;
+}
+
+.literate_doc td{
+    vertical-align:top;
+}
+
+.literate_doc .docs{
+	font-family: serif;
+	font-size: 10pt;
+	line-height: 1.5em;
+	padding: 10px 10px 0 10px;
+}
+
+.literate_doc .docs p:first-child{
+	margin-top: 0;
+}
+
+.literate_doc .docs p{
+	margin-left: 0 !important;
+}
+
+.literate_doc .code{
+	background: #f5f5f5;
+	border-left: 1px solid #aaaaaa;
+	padding-left: 10px;
+}
+
+.literate_doc .code pre{
+	font-size: 8pt;
+}
+
+#literate-fullscreen .literate_doc tr.block_highlight > td:first-child{
+	border-left:3px dotted #555;;
+	padding-left:7px;
+}
+
+.literate_doc tr.block_highlight > td:first-child{
+	border-left:1px dotted #555;
+	padding-left:9px;
+}
+
+.literate_doc tr.block_highlight > td{
+	background-color: #f9f9f9;
+}
+
+.literate_doc tr.folder{
+	display:none;
+}
+
+.literate_doc tr.folder td{
+	border-top:3px double #aaaaaa;
+	border-bottom:3px double #aaaaaa;
+	padding-bottom: 10px;
+}
+
+.literate_doc tr.folder td:last-child{
+	color:#ccc;
+	font-size:0.8em;
+	padding-top:10px;
+}
+
+.literate_doc tr.api td.docs{
+	border-top:3px double #aaaaaa;
+}
+
+#literate-fullscreen{
+	background-color: #fff;
+	position: fixed;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	display: none;
+}
+
+#literate-fullscreen .literate_doc{
+	overflow: visible;
+}
+
+#literate-fullscreen .literate_doc .docs{
+	min-width:400px;
+}
+
+#literate-fullscreen .scroll-wrapper{
+	overflow: scroll;
+	position: absolute;
+	top:40px;
+	left:0;
+	right:0;
+	bottom:0;
+}
+
+#literate-fullscreen > a{
+	line-height: 40px;
+	margin-left: 2em;
+}
+
+.lp-panel > a{
+	margin-right: 2em;
 }

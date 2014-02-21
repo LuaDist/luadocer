@@ -31,6 +31,10 @@ local pkio = require ('luadocer.io')
 local metrics = require 'metrics.init'
 if (type(metrics) ~= 'table') then metrics = require 'metrics' end
 
+-- MODIFIED BY: Michal Juranyi :: Added 2 modules
+local literate = require 'literate'
+local comments = require 'comments'
+
 --[[
 local metrics_loader = loadstring('require("metrics")');
 local metrics=pcall(metrics_loader);
@@ -412,10 +416,24 @@ function start (doc)
 		file_doc.formatted_text = formatted_text;
 			
 		metricsAST_results[filepath] = AST
+
+		comments.extendAST(AST) --MODIFIED BY: Michal Juranyi
 	end
 	--MODIFICATION ///
 	
 	local globalMetrics = metrics.doGlobalMetrics(metricsAST_results)
+
+        --MODIFIED BY: Michal Juranyi
+	--_ listOfFunctions is globalMetrics.functionDefinitions table converted to associative array
+	local listOfFunctions = {}
+
+	for _,fun in ipairs(globalMetrics.functionDefinitions) do
+		fun.docstring = comments.findDocstring(fun)
+		listOfFunctions[fun.name] = fun
+	end
+
+	literate.functions = listOfFunctions
+        --END OF MODIFICATION BY MJ
 
 	-- Process modules
 	if not options.nomodules then
@@ -469,7 +487,11 @@ function start (doc)
 					f:close()
 				end
 			end
-			
+
+                        --MODIFIED BY:  Michal Juranyi
+			literate.filename = file_doc.name
+                        file_doc.literate = literate.literate(file_doc.metricsAST)
+                        --END OF MODIFICATION BY MJ
 			
 			for _, funcinfo in pairs({}) do -- not working!! functionlister.getTableOfFunctions(text,true)) do		-- appendinf function informations to the tableOfFunctions
 				funcinfo.path = filepath													-- set path
@@ -486,7 +508,7 @@ function start (doc)
 			local f = lfs.open(filename, "w")
 			assert(f, string.format("could not open `%s' for writing", filename))
 			io.output(f)
-			-- call the file template
+			-- call the file template)
 			include("file.lp", {doc = doc, file_doc = file_doc, globalMetrics = globalMetrics} )
 			f:close()
 		end
@@ -511,6 +533,7 @@ function start (doc)
 	-- \\\ MODIFICATION ///
 	
 	-- copy extra files
+	file_copy("literate.js") --MODIFIED BY: Michal Juranyi
 	file_copy("luadoc.css");
 	file_copy("jquery.js");
 	file_copy("prettyprint.js");
