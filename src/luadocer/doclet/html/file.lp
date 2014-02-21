@@ -1,5 +1,6 @@
 <%
-
+local extra_javascript = {'highcharts.js', 'literate.js', 'jquery-ui.min.js'} --MODIFIED BY: Michal Juranyi :: Added literate.js
+local extra_css = {'jquery-ui-1.8.11.custom.css','indexOfFunctions.css'}
 local location={{"Files",luadoc.doclet.html.link("list_of_files.html","files/"..file_doc.name)}}
 local cw=""
 for w in file_doc.name:gmatch("[^/]+") do 
@@ -7,7 +8,7 @@ for w in file_doc.name:gmatch("[^/]+") do
 	table.insert(location,{w,luadoc.doclet.html.link("files/"..cw:sub(0,-2).."/file_listing.lua.lua.lua.html","files/"..file_doc.name)});
 end
 location[#location][2]=file_doc.file_name:gsub("%.lua$",".html"):gsub("%.luadoc$",".html");
-luadoc.doclet.html.include("header.lp", {title=file_doc.file_name, doc=doc, file_doc=file_doc, location=location, extra_javascript = {'highcharts.js'}}) %>
+luadoc.doclet.html.include("header.lp", {title=file_doc.file_name, doc=doc, file_doc=file_doc, location=location, extra_javascript = extra_javascript, extra_css = extra_css}) %>
 <h1>File <code><%=doc.sh(file_doc.name)%></code></h1>
 
 <%if file_doc.description then%>
@@ -39,15 +40,49 @@ luadoc.doclet.html.include("header.lp", {title=file_doc.file_name, doc=doc, file
 <br />
 <% luadoc.doclet.html.include("functions_and_tables.lp", {doc=doc, file_doc=file_doc, globalMetrics = globalMetrics}) %>
 <br />
-<h2 class='summary'>Pretty printed <%= doc.sh(file_doc.name:match("[^\/]+$")) %></h2>
-<script type='text/javascript' src="<%=luadoc.doclet.html.link("prettyprint.js", "files/"..file_doc.name)%>"></script>
-<div class='pretty_printer'>
-<%=file_doc.prettyprint%>
+<!-- MODIFIED BY: Michal Juranyi :: Tabbed layout and fullscreen -->
+<div id="tabs">
+
+	<ul>
+		<li><a href="#fragment-1"><span>Literate</span></a></li>
+        <li><a href="#fragment-2"><span>Pretty printed</span></a></li>
+    </ul>
+
+	<div id="fragment-1" class="lp-panel">
+		<% if file_doc.literate then %>
+		<a href="#" id="fullscreen-button">Fullscreen</a>
+		<a href="#" class="lp-toggle-api">Show/Hide API comments</a>
+		<div class='literate_doc'>
+		<%=file_doc.literate%>
+		</div>
+		<% end %>
+	</div>
+
+	<!--<h2 class='summary'>Pretty printed <%= doc.sh(file_doc.name:match("[^\/]+$")) %></h2>-->
+	<div id="fragment-2">
+		<script type='text/javascript' src="<%=luadoc.doclet.html.link("prettyprint.js", "files/"..file_doc.name)%>"></script>
+		<div class='pretty_printer'>
+		<%=file_doc.prettyprint%>
+		</div>
+	</div>
 </div>
+
+<% if file_doc.literate then %>
+<div id="literate-fullscreen">
+	<a href="#" class="exit-fullscreen">Exit fullscreen</a>
+	<a href="#" class="lp-toggle-api">Show/Hide API comments</a>
+	<div class="scroll-wrapper">
+	
+	</div>
+</div>
+<% end %>
+<!-- END OF MODIFICATIONS BY MJ -->
+<div>
 
 <script type='text/javascript'>
 	$(document).ready(function(){
 		$('#content .metrics_wrapper, #content dl.function, #content dl.table').hide();
+		$("#tabs").tabs(); // MODIFIED BY: Michal Juranyi
 	});
 </script>
 

@@ -3,6 +3,8 @@
 <div>
 
 	<div style="float:left; width:330px;">
+		<%=luadoc.doclet.html.include("metrics/metrics_document.lp", { documentMetrics = metricsAST.metrics.documentMetrics })%>
+		<br /> 
 		<%=luadoc.doclet.html.include("metrics/metrics_LOC.lp", { LOC = metricsAST.metrics.LOC })%>
 		<br /> 
 		<%=luadoc.doclet.html.include("metrics/metrics_statements.lp", { statements = metricsAST.metrics.statements })%>
@@ -42,7 +44,7 @@
 		
 	</table>
 	<div style="clear:both;"></div>
-	<%=luadoc.doclet.html.include("metrics/metrics_functions.lp", { metrics = metricsAST.metrics.blockdata.fundefs })%>	
+	<%=luadoc.doclet.html.include("metrics/metrics_functions.lp", { metrics = metricsAST.metrics.blockdata.fundefs})%>	
 	
 	<%
 		local file_count = 0

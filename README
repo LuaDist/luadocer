@@ -2,53 +2,55 @@
   -------------
   LuaDocer is a documentation generation tool for the Lua language. It produces
   standalone HTML documentation for the given projects, which documents all
-  files, functions, variables and tables that are used in the project. 
+  files, functions, variables and tables that are used in the project.
   Documentation comments are used to supply documentation data into the final
   documentation of the project.
-  
+
   Output of LuaDocer also contains a lot of lists, metrics and statistics, such as
   an alphabetical index of all global functions used in the project, source code
   syntax-aware highlighter, formatter and much more. Many aspects of the final
   documentation can be easily configured to suit everyone's needs.
-  
+
   LuaDocer is a fork (an enhanced version) of LuaDoc.
 
 * Availability
   ------------
-  LuaDocer is freely available for both academic and commercial purposes under. 
+  LuaDocer is freely available for both academic and commercial purposes under.
   See doc/us/license.html for details.
-  
+
 * Dependecies
   -----------------------------------------
   LuaDocer requires following modules to be installed:
-  	lua >= 5.1	(not tested with 5.2)
+  lua >= 5.1	(not tested with 5.2)
 	lualogging >= 1.1.3
 	luafilesystem >= 1.2.1
-	luapretty >= 0.1
-	luametrics >= 0.1
+	luapretty >= 0.2
+	luametrics >= 0.2
+  luacomments >= 0.1
+  lualiterate >= 0.1
 
 * Installation
   ------------
-  Simplest way to install LuaDocer is to use the LuaDist (www.luadist.org) deployment 
+  Simplest way to install LuaDocer is to use the LuaDist (www.luadist.org) deployment
   tool by invoking:
-	
+
 	> ./luadist _luadocer install luadocer
-  
+
   which will install LuaDocer and all it's dependecies into the _luadocer folder.
-  LuaDocer can be also installed using CMake (www.cmake.org). For manual installation 
-  copy the luadocer folder from src into your LUA_PATH folder. 
+  LuaDocer can be also installed using CMake (www.cmake.org). For manual installation
+  copy the luadocer folder from src into your LUA_PATH folder.
 
 * Running
   -------
   LuaDocer installs to a standalone directory and should be able to execute on
   most systems supported systems without the need to set up any environment.
 
-  To invoke the LuaDocer main script simply execute luadocer.lua from src folder 
+  To invoke the LuaDocer main script simply execute luadocer.lua from src folder
   using the Lua runtime interpreter in the install directory:
   	$ cd _luadocer/bin/
   	$ lua luadocer.lua
-	
-  LuaDist also installs a binary versions of this sript called luadocer. 
+
+  LuaDist also installs a binary versions of this sript called luadocer.
 
 * Compatibility warning for Windows systems
   -----------------------------------------
@@ -58,13 +60,14 @@
 
 * Authors
   -------
-  LuaDocer is developed and maintained by:
+  Maintenance:
+  Peter Kapec (project supervisor)
+
+  Development:
 	Ivan Šimko
-	Viliam Kubis  
-	Peter Kapec (project supervisor)
-	
+	Viliam Kubis
+
   Contributors:
 	Gabriel Duchoň
-	
-
-
+  Péter Kósa
+  Michal Juranyi

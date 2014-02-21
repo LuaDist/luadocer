@@ -1,8 +1,11 @@
 -------------------------------------------------------------------------------
 -- @release $Id: standard.lua,v 1.39 2007/12/21 17:50:48 tomas Exp $
+-- @release $Id: standar.lua 2013/4/4  Peter Kosa
+-- Last release - changed comment parsing. Parsing with comments module. 
+-- Added new supported style - ExpLua style
 -------------------------------------------------------------------------------
 
-local assert, pairs, tostring, type = assert, pairs, tostring, type
+local assert, pairs, tostring, type,print = assert, pairs, tostring, type,print
 local io = require "io"
 local lfs = require "lfs"
 local luadoc = require "luadocer"
@@ -10,6 +13,7 @@ local util = require "luadocer.util"
 local tags = require "luadocer.taglet.standard.tags"
 local string = require "string"
 local table = require "table"
+local comments = require "comments"
 
 module 'luadocer.taglet.standard'
 
@@ -146,13 +150,69 @@ local function parse_code (f, line, modulename)
 	return line, code, modulename
 end
 
+---
+-- Wrapper function for (lua)comments module Parse function.
+-- @return Returns parsed informations.
+--@author Peter Kosa
+function luacomments_wrapper(comment)
+	
+		if(comment~="")then
+--******************************************			
+			local expluaparsed = comments.Parse(comment,"explua",true)
+				if(not expluaparsed)then
+					expluaparsed = comments.Parse(comment,"explua")
+				end
+				if(expluaparsed)then
+
+						if(expluaparsed.type=="descr")then
+							return nil,nil,nil,expluaparsed.text 
+						end
+						local returntext 
+						if(expluaparsed.type=="table")then
+							return 1,"explua","table",expluaparsed.var,expluaparsed.text
+						end	
+						if(expluaparsed.type=="tablefield")then
+							returntext=expluaparsed.var.." "..expluaparsed.text						
+							return 1,"explua","field",returntext
+						end
+						if(expluaparsed.type=="module")then
+							returntext=expluaparsed.text						
+							return nil,nil,nil,returntext
+						end
+						if expluaparsed.var  and expluaparsed.text then
+							returntext=expluaparsed.var.." "..expluaparsed.text
+						else
+							returntext=expluaparsed.var or expluaparsed.text
+						end
+
+						return 1,"explua",expluaparsed.type,returntext	,expluaparsed.vartype
+				end
+--******************************************
+				local parsed =comments.Parse(comment,"luadoc") 
+				if(parsed)then
+				if(parsed.style=="luadoc")then
+					if(parsed.type=="descr")then
+						return nil,nil,nil,parsed.text 
+					end
+					local returntext 
+					if parsed.name  and parsed.text then
+						returntext=parsed.name.." "..parsed.text
+					else
+						returntext=parsed.name or parsed.text
+					end
+
+					return 1,1,parsed.type,returntext
+				end
+			end
+		end
+	return nil
+end
 -------------------------------------------------------------------------------
 -- Parses the information inside a block comment
 -- @param block block with comment field
 -- @return block parameter
 
 local function parse_comment (block, first_line)
-
 	-- get the first non-empty line of code
 	local code = table.foreachi(block.code, function(_, line)
 		if not util.line_empty(line) then
@@ -192,25 +252,68 @@ local function parse_comment (block, first_line)
 	-- parse @ tags
 	local currenttag = "description"
 	local currenttext
-	
+	local expdone=false
 	table.foreachi(block.comment, function (_, line)
-		line = util.trim_comment(line)
-		
-		local r, _, tag, text = string.find(line, "@([_%w%.]+)%s+(.*)")
-		if r ~= nil then
-			-- found new tag, add previous one, and start a new one
-			-- TODO: what to do with invalid tags? issue an error? or log a warning?
-			tags.handle(currenttag, block, currenttext)
-			
-			currenttag = tag
-			currenttext = text
-		else
-			currenttext = util.concat(currenttext, line)
-			assert(string.sub(currenttext, 1, 1) ~= " ", string.format("`%s', `%s'", currenttext, line))
+	local expdone=false	
+		local r, style, tag, text,extra = luacomments_wrapper(line)
+		if(style=="explua")then
+			if(tag=="table")then
+				currenttag="class"
+				currenttext="table"
+				tags.handle(currenttag,block,currenttext)
+				currenttag="name"
+				currenttext="tabulka"
+				tags.handle(currenttag,block,currenttext)
+				currenttag="description"
+				currenttext=extra
+				tags.handle(currenttag,block,currenttext)
+				expdone=true
+			elseif(tag=="module")then
+				currenttag="class"
+				currenttext="module"
+				tags.handle(currenttag,block,currenttext)
+				currenttag="name"
+				currenttext=text
+				tags.handle(currenttag,block,currenttext)
+				currenttag="description"
+				currenttext=extra
+				tags.handle(currenttag,block,currenttext)
+				expdone=true
+			elseif(tag=="param" )then
+				if(not block.types)then block.types={} end
+				local _,_,pname=string.find(text,"^([_%w%.]+)")
+				if(extra and extra~="")then
+					block.types[pname]={}
+					for k,v in pairs(extra) do
+						table.insert(block.types[pname],v)
+					end
+				end
+			elseif(tag=="return" )then
+				if(not block.rettypes)then block.rettypes={} end
+				for k,v in pairs(extra) do
+					table.insert(block.rettypes,v)
+				end
+			end
 		end
+		if(not expdone)then
+			if r ~= nil then
+				-- found new tag, add previous one, and start a new one
+				-- TODO: what to do with invalid tags? issue an error? or log a warning?
+				tags.handle(currenttag, block, currenttext)
+				
+				currenttag = tag
+				currenttext = text
+			else
+				if(not text) then
+					text=""
+				end
+				currenttext = util.concat(currenttext, text)
+				assert(string.sub(currenttext, 1, 1) ~= " ", string.format("`%s', `%s'", currenttext, text))
+			end 
+		end
+
 	end)
 	tags.handle(currenttag, block, currenttext)
-
 	-- extracts summary information from the description
 	block.summary = parse_summary(block.description)
 	assert(string.sub(block.description, 1, 1) ~= " ", string.format("`%s'", block.description))
@@ -273,6 +376,7 @@ function parse_file (filepath, doc)
 	local line = f:read()
 	local first = true
 	while line ~= nil do
+
 		if string.find(line, "^[\t ]*%-%-%-") then
 			-- reached a luadoc block
 			local block
