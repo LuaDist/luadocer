@@ -19,13 +19,15 @@
 		
 	</script>
 	
-<h1>Project metrics</h1>
+<h1>Project metrics </h1>
 
 <p>Here are shown some metrics of the project</p>
 
 <div class='metrics_wrapper'>
 	<h2>Metrics</h2>
 		<div style="float:left; width: 330px;">
+			<%=luadoc.doclet.html.include("metrics/metrics_document.lp", { documentMetrics = metrics.documentMetrics})%>
+			<br />	
 			<%=luadoc.doclet.html.include("metrics/metrics_LOC.lp", { LOC = metrics.LOC, filenum = filenum, modulenum = modulenum })%>
 			<br />
 			<%=luadoc.doclet.html.include("metrics/metrics_halstead.lp", { halstead = metrics.halstead })%>

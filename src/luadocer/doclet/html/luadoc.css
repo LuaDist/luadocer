@@ -106,7 +106,7 @@ div.header, div.footer { margin-left: 0em; }
 	width: 18em;
 	margin: 0;
 	background-color: #f0f0f0;
-	overflow:visible;
+	overflow:AUTO;
 }
 
 #navigation h1 {
@@ -425,8 +425,41 @@ pre.highlighted_code .upper_comment {
 	color:blue;
 	font-style:italic;
 }
+/*custom comments*/
+pre.highlighted_code .upper_comment_todo {
+	color:blue;
+	background-color:#ccc;	
+	font-style:italic;
+}
+pre.highlighted_code .upper_comment_how {
+	color:blue;
+	background-color:#99cc66;	
+	font-style:italic;
+}
+pre.highlighted_code .upper_comment_info {
+	color:blue;
+	background-color:#ffff33;	
+	font-style:italic;
+}
+pre.highlighted_code .upper_comment_bug {
+	color:blue;
+	background-color:#ff9933;	
+	font-style:italic;
+}
+pre.highlighted_code .upper_comment_question {
+	color:blue;
+	background-color:#ffcc33;	
+	font-style:italic;
+}
+pre.highlighted_code .upper_comment_fixme {
+	color:blue;
+	background-color:#ff9966;	
+	font-style:italic;
+}
+/*custom comments END*/
 
 pre.highlighted_code .upper_number, .upper_string {
+
 	color:red;
 }
 

@@ -4,7 +4,8 @@
 -------------------------------------------------------------------------------
 
 local lfs = require("lfs")
-local type, table, string, io, assert, tostring, setmetatable, pcall = type, table, string, io, assert, tostring, setmetatable, pcall
+local re = require("re")
+local type, table, string, io, assert, tostring, setmetatable, pcall,print = type, table, string, io, assert, tostring, setmetatable, pcall,print
 
 -------------------------------------------------------------------------------
 -- Module with several utilities that could not fit in a specific module
@@ -198,4 +199,51 @@ function loadlogengine(options)
 	
 	return logger
 end
+
+---
+--% Check if path is relative
+--autor KOSA
+--@ p (string) path string
+--: (bool) true or false
+local function isrelative(p)
+	if(p:match(".")~="/" or p:match("/%.%.?/")) then
+		return true
+	end
+	return false
+end
+
+---
+--% Converts the path string to absoluthe path
+--autor KOSA
+--@ n (string) path string
+--: (string) absoluthe path
+function getabsolutepath(n)			
+	local original_path = lfs.currentdir()
+
+	local real_path=''
+	if(isrelative(n)) then
+		
+		if(n:match(".")~="/") then 		--prvy znak nie je / => path nie je absolutna
+			real_path = lfs.currentdir()
+		end
+
+		
+		for v in string.gmatch(n,"[^/]+") do
+			if(v =="..") then 
+				real_path = real_path .. "/\.\."
+ 				lfs.chdir(real_path)				
+				real_path =lfs.currentdir()
+			elseif(v~=".") then
+				real_path = real_path .. "/" ..  v
+			end
+
+		end
+	lfs.chdir(original_path)
+
+		return (string.gsub(real_path,"[/]+",'/'))		--replace multi-slahes with one simple slash. like : /////    ->  /
+	end
+	lfs.chdir(original_path)	
+	return (string.gsub(n,"[/]+",'/'))
+end
+--___________________________________________
 

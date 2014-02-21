@@ -17,7 +17,21 @@ end
 <ul>
 	<%for p = 1, #func.param do%>
 	<li>
-	  <%=func.param[p]%>: <%=doc.sh(func.param[func.param[p]]) or ""%>
+	  <%=func.param[p]%>: 		<%=doc.sh(func.param[func.param[p]]) or ""%>
+	  	<%-- KOSA EXPLUA param types
+	  	if(func.types and func.types[func.param[p]])then
+		local types="<b>Types:</b> "
+			if(type(func.types[func.param[p]])=="table")then
+				for k,v in pairs(func.types[func.param[p]]) do
+					types = types .. " ".. v
+				end
+			else
+			types = types ..  func.types[func.param[p]]
+			end
+		%>
+		</br><i> <%=types%> </i></br>
+		<%end%>
+
 	</li>
 	<%end%>
 </ul>
@@ -39,12 +53,29 @@ end
 <%if type(func.ret) == "string" then%>
 <h3>Return value:</h3>
 <%=doc.sh(func.ret)%>
+		
+		<%--KOSA EXPLUA return types
+		if(func.rettypes )then
+		local rettypes="<b>Types:</b> "
+			if(type(func.rettypes)=="table")then
+				for k,v in pairs(func.rettypes) do
+					rettypes = rettypes .. " ".. v
+				end
+			else
+			rettypes = rettypes ..  func.rettypes
+			end
+		%>
+			</br><i> <%=rettypes%> </i></br>
+		<%end%>
+
 <%elseif type(func.ret) == "table" then%>
 <h3>Return values:</h3>
 <ol>
 	<%for _, ret in ipairs(func.ret) do%>
-	<li><%= doc.sh(ret) %>
+	<li><%= doc.sh(ret) %></li>
 	<%end%>
+
+
 </ol>
 <%end%>
 
