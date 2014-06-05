@@ -632,7 +632,8 @@ local extra_css = {'jquery-ui-1.8.11.custom.css','indexOfFunctions.css'}
 <%else%>
 <ul>There are no NOT standardly documented functions</ul>
 <%end%>
---end Peter Mendel
+<%--end Peter Mendel
+%>
 <%--
 %>
 
