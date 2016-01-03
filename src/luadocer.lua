@@ -23,6 +23,10 @@ local function print_help ()
 Generate documentation from files. Available options are:
   -d path                      output directory path
   -t path                      template directory path
+  -u path 			generate UML diagrams with PlantUML
+  				path to 'plantuml.jar'
+  -s print/write 		static analysis of source codes (require luacheck)
+  				'print' for output print, 'write' for add analysis to documentation
   -c charset                   source files encoding, defaults to UTF-8
   -p project name              project name, not displayed if left empty
   -h, --help                   print this help and exit
@@ -71,6 +75,15 @@ local OPTIONS = {
 	p=function(arg,i,options)
 		local pn = arg[i+1];
 		options.project_name=pn;
+		return 1;
+	end,
+	u=function(arg,i,options)
+		local path = arg[i+1];
+		options.plantuml_path=path;
+		return 1;
+	end,
+	s=function(arg, i, options)
+		options.syntax_check=arg[i+1];
 		return 1;
 	end,
 	h = print_help,
@@ -129,6 +142,7 @@ function main (arg)
 		return
 	end
 	local files, options = process_options (arg)
+	
 	return luadocer.main(files, options)
 end
 

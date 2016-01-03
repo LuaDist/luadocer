@@ -1,7 +1,7 @@
 --- This dist file is part of LuaDist project
 
 name = "luadocer"
-version = "0.2.1"
+version = "0.3"
 
 desc = "LuaDocer is a documentation tool for Lua source code (enhanced LuaDoc)"
 author = "Viliam Kubis, Ivan Šimko, Peter Kapec"
@@ -19,4 +19,5 @@ depends = {
 	"luametrics >= 0.2.1",
 	"luacomments >= 0.2",
 	"lualiterate >= 0.1",
+	"luaplantuml >= 0.1",
 }

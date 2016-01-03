@@ -16,5 +16,11 @@ Generated <%= os.date("%d.%m.%Y %H:%M:%S") %> by LuaDoc
 <li><a href='metrics/index.html'>Project metrics</a></li>
 <li><a href='customcommentlist/customs.html'>Informational comments</a></li>
 
+<%if doc.check then%>
+<li><a href="<%=luadoc.doclet.html.link("check/index.html",from)%>">Static analysis</a></li>
+<%end%>
+<%if doc.diagram then%>
+<li><a href="<%=luadoc.doclet.html.link("diagram/index.html",from)%>">UML diagrams</a></li>
+<%end%>
 
 <%= luadoc.doclet.html.include("footer.lp", {doc=doc}) %>

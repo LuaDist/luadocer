@@ -162,6 +162,11 @@ div.header, div.footer { margin-left: 0em; }
 	background-color: #ffffff;
 }
 
+#content img
+{
+	max-width:100%;
+}
+
 #about
 {
 	clear: both;
@@ -655,4 +660,13 @@ div.function_detail h3 {
 
 .lp-panel > a{
 	margin-right: 2em;
+}
+
+.syntax pre{
+	background-color: #F5F5F5;
+	border: 1px solid #C0C0C0;
+	padding: 10px;
+	margin: 10px 0px;
+	overflow: auto;
+	font-family: "Andale Mono",monospace;
 }

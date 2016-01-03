@@ -9,7 +9,7 @@ for w in file_doc.name:gmatch("[^/]+") do
 end
 location[#location][2]=file_doc.file_name:gsub("%.lua$",".html"):gsub("%.luadoc$",".html");
 luadoc.doclet.html.include("header.lp", {title=file_doc.file_name, doc=doc, file_doc=file_doc, location=location, extra_javascript = extra_javascript, extra_css = extra_css}) %>
-<h1>File <code><%=doc.sh(file_doc.name)%></code></h1>
+<h1>File <code><%=doc.sh(file_doc.name):gsub("^/","")%></code></h1>
 
 <%if file_doc.description then%>
 <p><%=doc.sh(file_doc.description)%></p>
@@ -30,13 +30,27 @@ luadoc.doclet.html.include("header.lp", {title=file_doc.file_name, doc=doc, file
 <p><small><b>Release:</b> <%=doc.sh(file_doc.release)%></small></p>
 <%end%>
 
-<a href="#" class="toggle_source" onclick="$(this).next().slideToggle(); return false;">[ show / hide file metrics ]</a>
+<a href="#" class="toggle_source" onclick="$(this).next().next().slideToggle(); return false;">[ show / hide file metrics ]</a>
+<% if (file_doc.uml) then %>
+	<a href='#' onclick="$(this).next().next().slideToggle(); return false;" class='toggle_source'>[ show / hide global diagram ]</a>
+<% end %>
 <div class='metrics_wrapper'>
 	<h2>Metrics</h2>
 	<%=luadoc.doclet.html.include("metrics/metrics_file.lp", { metricsAST = file_doc.metricsAST, globalMetrics = globalMetrics })%>
 	<div style='clear:both;'></div>
 	<a href="#" class="toggle_source" onclick="$(this).parent().slideToggle(); return false;">[ hide metrics ]</a>
 </div>
+
+<div  style="display: none" id="uml2">
+	<% if (file_doc.uml) then %>
+		<h3>Global UML Diagram</h3>
+		<ul>
+			<a href = "<%=luadoc.doclet.html.link((file_doc.uml:gsub("^/","../")),"files/"..file_doc.name)%>"><img src="<%=luadoc.doclet.html.link((file_doc.uml:gsub("^/","../")),"files/"..file_doc.name)%>"> </a>
+		</ul>
+	<% end %>&nbsp;
+	<a href="#" class="toggle_source" onclick="$(this).parent().slideToggle(); return false;">[ hide diagram ]</a>
+</div>
+
 <br />
 <% luadoc.doclet.html.include("functions_and_tables.lp", {doc=doc, file_doc=file_doc, globalMetrics = globalMetrics}) %>
 <br />

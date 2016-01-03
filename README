@@ -53,7 +53,7 @@
   LuaDist also installs a binary versions of this sript called luadocer.
 
   Example usage:
-  $ ./lua luadocer -d output_directory -t ../lib/lua/luadocer/doclet/html/ path/to/lua_sources/
+  $ ./lua luadocer -u ./plantuml.jar -d output_directory -t ../lib/lua/luadocer/doclet/html/ path/to/lua_sources/
 
 * Compatibility warning for Windows systems
   -----------------------------------------

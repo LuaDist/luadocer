@@ -51,13 +51,16 @@ local function print_table(t)
 end
 
 local function hierarchy_menu(doc_obj,collection,symbol,is_module)
+	
 	local parents_printed={}
 	local parents={}
+	
 	for _, modulename in ipairs(collection) do
 		local parts=get_parts(modulename,symbol)
 		local parent=""
 		for k,v in ipairs(parts) do
 			parent=parent..(k>1 and symbol or "")..v;
+
 			if(not parents[v]) then
 				if(k~=#parts) then
 					parents[parent]=1;
@@ -106,6 +109,12 @@ end
 	<li><a href="<%=luadoc.doclet.html.link("tablelist/index.html", from)%>">List of tables</a></li>
 	<li><a href="<%=luadoc.doclet.html.link("metrics/index.html", from)%>">Project metrics</a></li>
 	<li><a href="<%=luadoc.doclet.html.link("customcommentlist/customs.html",from)%>">Informational comments</a></li>
+	<%if doc.check then%>
+	<li><a href="<%=luadoc.doclet.html.link("check/index.html",from)%>">Static analysis</a></li>
+	<%end%>
+	<%if doc.diagram then%>
+	<li><a href="<%=luadoc.doclet.html.link("diagram/index.html",from)%>">UML diagrams</a></li>
+	<%end%>
 </ul>
 
 
@@ -122,7 +131,10 @@ end
 <%if not options.nofiles and #doc.files > 0 then%>
 <h1><a href='<%= luadoc.doclet.html.link("list_of_files.html",from) %>'>Files</a></h1>
 <ul class='menulist'>
-<%hierarchy_menu(file_doc,doc.files,"/",nil);%>
+<%
+local temp = luadoc.doclet.html.check(doc.files)
+
+hierarchy_menu(file_doc,temp,"/",nil);%>
 </ul>
 <%end%>
 

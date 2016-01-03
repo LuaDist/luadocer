@@ -18,9 +18,11 @@ module ("luadocer.doclet.html")
 local io = require"io"
 local lfs = require "lfs"
 local lp = require "luadocer.lp"
+local util = require "luadocer.util"
 local luadoc = require"luadocer"
 local string = require"string"
 local table = require"table"
+
 
 --MODIFICATION \\\
 local highlighter = require ('luapretty.highlighter')
@@ -29,6 +31,7 @@ local ast_helper = require ('luapretty.ast_helper')
 local pkio = require ('luadocer.io')
 
 local metrics = require 'metrics.init'
+local luaplantuml = require 'luaplantuml.init'
 if (type(metrics) ~= 'table') then metrics = require 'metrics' end
 
 -- MODIFIED BY: Michal Juranyi :: Added 2 modules
@@ -44,7 +47,6 @@ end
 --]]
 	
 --MODIFICATION ///
-
 -------------------------------------------------------------------------------
 -- Looks for a file `name' in given path. Removed from compat-5.1
 -- @param path String with the path.
@@ -53,6 +55,7 @@ end
 --	or nil in case the file is not found.
 
 local function search (path, name)
+
   for c in string.gfind(path, "[^;]+") do
     c = string.gsub(c, "%?", name)
     local f = io.open(c)
@@ -81,11 +84,11 @@ end)()
 function include (template, env)
 	-- template_dir is relative to package.path
 	local templatepath = options.template_dir .. template
-	
+	templatepath = templatepath:gsub("\/\/","\/")
 	-- search using package.path (modified to search .lp instead of .lua
 	local search_path = string.gsub(package.path, "%.lua", "")
 	local templatepath = search(search_path, templatepath)
-	
+
 	assert(templatepath, string.format("template `%s' not found", template))
 	
 	env = env or {}
@@ -109,7 +112,6 @@ function include (template, env)
 		end
 	end
 	env.getUniqueId = getUniqueId
-	
 	return lp.include(templatepath, env)
 end
 
@@ -119,9 +121,11 @@ end
 -- @return link to the html file
 
 function link (html, from)
+	html = html:gsub(lfs.currentdir(), "")
 	local h = html
 	from = from or ""
 	string.gsub(from, "/", function () h = "../" .. h end)
+
 	return h
 end
 
@@ -159,14 +163,18 @@ end
 -- @return name of the generated html file
 
 function file_link (to, from)
+	to = to:gsub(lfs.currentdir(), "")
 	assert(to)
 	from = from or ""
 	
 	local href = to
+	
 	href = string.gsub(href, "lua$", "html")
 	href = string.gsub(href, "luadoc$", "html")
-	href = "files/" .. href
+	href = "files/	" .. href
 	string.gsub(from, "/", function () href = "../" .. href end)
+	href = href:gsub(lfs.currentdir(), "")
+
 	return href
 end
 
@@ -181,10 +189,10 @@ function link_to (fname, doc, module_doc, file_doc, from, kind)
 	assert(doc)
 	from = from or ""
 	kind = kind or "functions"
-	
 	if file_doc then
 		for _, func_name in pairs(file_doc[kind]) do
 			if func_name == fname then
+
 				return file_link(file_doc.name, from) .. "#" .. fname
 			end
 		end
@@ -205,6 +213,7 @@ function link_to (fname, doc, module_doc, file_doc, from, kind)
 	end
 	
 	for _, func_name in pairs(module_doc[kind]) do
+
 		if func_name == fname then
 			return module_link(modulename, doc, from) .. "#" .. fname
 		end
@@ -240,9 +249,10 @@ function out_file (filename)
 	local h = filename
 	h = string.gsub(h, "lua$", "html")
 	h = string.gsub(h, "luadoc$", "html")
-	h = "files/" .. h
+	h = "files" .. h
 --	h = options.output_dir .. string.gsub (h, "^.-([%w_]+%.html)$", "%1")
 	h = options.output_dir .. h
+
 	return h
 end
 
@@ -259,6 +269,7 @@ end
 -- lua_file4function_name.html --> collision)
 -- TODO: examine all possible scenarios for function names containing characters other than A-Za-Z0-9_ (is this even possible?)
 function out_function (filename,func_name,unique_id)
+
 	local h = filename:match("[^/\]+$");
 	func_name=func_name:gsub("[^A-Za-z0-9_]","");
 	h = string.gsub(h, "%.lua$", unique_id..func_name..".html")
@@ -271,7 +282,11 @@ end
 -- @param file filename to copy
 -- @author Viliam Kubis
 function file_copy(file)
+	local  temp = options.template_dir..file
+	temp = temp:gsub("\/\/","\/")
+
 	local f = lfs.open(options.template_dir..file, "rb") --binary open is significant in windows systems
+	
 	local data=f:read("*all");
 	f:close();
 	f=lfs.open(options.output_dir..file, "wb")
@@ -319,6 +334,16 @@ function strsplit(delimiter, text)
   return list
 end
 
+function check(string)
+	local filepath_temp = {}
+	if string ~= nil then
+		for k,v in ipairs(string) do
+			filepath_temp[k] = v:gsub(lfs.currentdir(), "")
+		end
+	end
+	return filepath_temp
+end
+
 -----------------------------------------------------------------
 -- Generate the output.
 -- @param doc Table with the structured documentation.
@@ -329,6 +354,11 @@ function start (doc)
 	-- Convert special charecters into HTML entities, this fixes MANY html-injection bugs on many pages
 	-- @author Viliam Kubis
 	doc.sh=function (text)
+
+		if text~= nil then
+			text = text:gsub(lfs.currentdir(), "")
+			-- print(text)
+		end
 		if(text==nil) then
 			return nil;
 		end
@@ -350,8 +380,10 @@ function start (doc)
 		local prefix
 		local newpref=''
 		for k,v in pairs(paths) do	
+			v.path = v.path:gsub(lfs.currentdir(), "")
+		--OKA
 			if(prefix==nil)then
-				prefix = v.path
+				
 			elseif(prefix~=v.path)then
 				local split1 = {}
 				local split2 = {}
@@ -408,6 +440,16 @@ function start (doc)
 -------------------------------------------------------------------	
 	-- Generate index file
 	if (#doc.files > 0 or #doc.modules > 0) and (not options.noindexpage) then
+
+		-- KARASEK
+		if options.plantuml_path ~= nil then 
+			doc.diagram = 1 					-- add 'UML diagrams' option to menu 
+		end
+
+		if options.syntax_check == "write" then
+			doc.check = 1 					-- add 'Static analysis' option to menu 
+		end
+		
 		local filename = options.output_dir.."index.html"
 		logger:info(string.format("generating file `%s'", filename))
 		local f = lfs.open(filename, "w")
@@ -434,7 +476,7 @@ function start (doc)
 	io.output(f)
 	include("list_of_files.lp", { doc = doc })
 	f:close()
-	
+
 	-- generate module hierarchy
 	local module_hierarchy={};
 	for _, modulename in ipairs(doc.modules) do
@@ -463,6 +505,7 @@ function start (doc)
 	local file_hierarchy={};
 	for _, filename in ipairs(doc.files) do
 		local last=filename:gsub("/.+$","");
+
 		if(last~=filename) then --nazov v adresari
 			local key=filename:match("(.+)/.+$");
 			if(not file_hierarchy[key]) then
@@ -472,8 +515,11 @@ function start (doc)
 			end
 		end
 	end
+	
 	for k,v in pairs(file_hierarchy) do
-		local filename = options.output_dir.."files/"..k.."/file_listing.lua.lua.lua.html";  -- NOT OK if the directory contains file named file_listing.lua.lua.lua.lua -> becomes file_listing.lua.lua.lua.html -> TODO: generate unique filename somehow or store in a different folder (e.g listings/)
+		k = k:gsub(lfs.currentdir(), "")
+		local filename = options.output_dir.."files"..k.."/file_listing.lua.lua.lua.html";  -- NOT OK if the directory contains file named file_listing.lua.lua.lua.lua -> becomes file_listing.lua.lua.lua.html -> TODO: generate unique filename somehow or store in a different folder (e.g listings/)
+
 		logger:info(string.format("generating file `%s'", filename))
 		local f = lfs.open(filename, "w")
 		assert(f, string.format("could not open `%s' for writing", filename))
@@ -481,12 +527,90 @@ function start (doc)
 		include("file_listing.lp", { doc = doc, fname=k, hierarchy=v })
 		f:close()
 	end
-	
+
+	-- KARASEK
+	-- static check
+	if options.syntax_check == "print" then  		-- if 'print' was on stdin then just print to stdout 
+		print("Start syntax analysis...");
+
+		for _, filepath in ipairs(doc.files) do	
+			os.execute("luacheck " .. filepath)
+		end
+	end
+
+	local analysis_results = {}
+	if options.syntax_check == "write" then 
+		io.stdout:write("Syntax analysis...\r")
+		io.stdout:flush()
+		
+		for _, filepath in ipairs(doc.files) do
+
+			local temp_file = filepath:gsub('.%w*$', '') .. "_checking" 			-- we need make temporary file of luacheck report
+			os.execute("luacheck --no-color " .. filepath .. " > " .. temp_file) 	-- execute analysis
+			
+			local result = pkio.ReadFile(temp_file) 	-- add analysis to table
+			analysis_results[#analysis_results+1] = {}
+			
+			if (string.match(result, "Failure")) then 						-- if we find "Failure" in result text it has warnings or errors
+				analysis_results[#analysis_results].name = filepath:gsub(lfs.currentdir(), "")
+				analysis_results[#analysis_results].status = 'Failure'
+				
+				local temp_result = result:gsub('^Checking(.+)Failure(.+)Total:(.+)', '%2')
+				temp_result = temp_result:gsub(filepath .. ":", "")
+
+				analysis_results[#analysis_results].result = temp_result:gsub("%s%s+",'\n')
+				analysis_results[#analysis_results].info = result:gsub('^.+Total:', 'Total:')
+			else -- if not then it's OK
+				analysis_results[#analysis_results].name = filepath:gsub(lfs.currentdir(), "")
+			end
+			os.remove(temp_file) 													-- remove that temporary file
+		end
+
+		-- DEBUG PRINT
+		-- for k,v in ipairs(analysis_results) do
+		-- 	print(analysis_results[k])
+		-- end
+			
+		io.stdout:write("Start syntax analysis...\tOK\n")
+		io.stdout:flush()
+	end
+
+	-- generate diagrams
+	local diagram_results = {}
+	local settings = {}	
+
+	if options.plantuml_path ~= nil then 
+		io.stdout:write("Generating diagrams... \r")
+		io.stdout:flush()
+
+		for _, filepath in ipairs(doc.files) do	
+			
+			local text = pkio.ReadFile(filepath)
+			settings.plantuml_path = options.plantuml_path .. " %s"
+			settings.dir_path = util.getabsolutepath(options.output_dir) .. '/'
+			settings.current_file = filepath
+			
+			-- parse extended_path
+			settings.extended_path = filepath:gsub(lfs.currentdir(), "")
+			settings.extended_path = settings.extended_path:gsub("^(.+)/.-$","%1/")
+			settings.extended_path = settings.extended_path:gsub("^\/","")
+			
+			settings.file_format = "svg"
+			diagram_results = luaplantuml.process_text(text, settings)
+		end
+		-- DEBUG PRINT
+		-- for _, v in ipairs(diagram_results) do
+		-- 	print(v.name .. ' CESTA: ' .. v.path .. '  STRING: ' .. v.uml_string)
+		-- end
+		io.stdout:write("Generating diagrams...\t\tOK\n")
+		io.stdout:flush()
+	end
 
 	--MODIFICATION \\\ (Ivan Simko) pridane globalne metriky ... a metriky ulozene do kazdej file_doc tabulky
-	print("Generating metrics...");
+	io.stdout:write("Generating metrics...\r")
+	io.stdout:flush()
 	local metricsAST_results = {}
-		
+
 	for _, filepath in ipairs(doc.files) do
 		
 		local text = pkio.ReadFile(filepath)
@@ -535,6 +659,8 @@ function start (doc)
 			include("module.lp", { doc = doc, module_doc = module_doc, globalMetrics= globalMetrics} )
 			f:close()
 		end
+		io.stdout:write("Generating metrics...\t\tOK\n")
+		io.stdout:flush()
 	end
 	
 	-- MODIF (Ivan Simko) - odstranene ! -> tableofFunctions a tableOfMetrics
@@ -542,11 +668,10 @@ function start (doc)
 	-- Process files
 	if not options.nofiles then
 		for _, filepath in ipairs(doc.files) do
+			doc.files[filepath].name = doc.files[filepath].name:gsub(lfs.currentdir(), "")
 			local file_doc = doc.files[filepath]
-			
-			-- get file name part of the current file and store it
 			file_doc.file_name=file_doc.name:match("[^/]+$");
-
+			file_doc.name = file_doc.name:gsub(lfs.currentdir(), "")
 			--MODIFICATION \\\ (Ivan Simko) -> variables formatted_text and metricsAST are taken from file_doc
 			local highlighter_pt=nil;
 			if(file_doc.formatted_text) then
@@ -562,12 +687,30 @@ function start (doc)
 					--file_doc['functions'][func_name]['prettyprint']=highlighter.assemble_table(ast_helper.getfunctionnode(highlighter_pt,func_name) or {});
 					file_doc['functions'][func_name]['prettyprint']=highlighter.assemble_table(functionNode);
 					-- vygenerujeme unikatny nazov suboru pre tuto funkciu
+
 					local filename = out_function(file_doc.name,func_name,pos);
 					file_doc['functions'][func_name]['detail_link']=filename;
+
+					-- KARASEK
+					if options.plantuml_path ~= nil then 
+						for _, v in ipairs(diagram_results) do
+
+							if v.name == "global" then 		-- add global UML path
+								file_doc.uml = v.path
+							end
+							if v.name == func_name then 	-- add function UML path
+								file_doc['functions'][func_name]['uml']=v.path;
+							end
+						end
+					end
+
 					logger:info(string.format("generating function detail: file `%s'", filename))
-					local f = lfs.open(options.output_dir:gsub("/+","/").."/files/"..file_doc.name:gsub("[^\/]+$","")..filename, "w")
+					
+					local f = lfs.open(options.output_dir:gsub("/+","/").."files"..file_doc.name:gsub("[^\/]+$","")..filename, "w")
+					
 					assert(f, string.format("could not open `%s' for writing", filename))
 					io.output(f)
+
 					include("function_detail.lp", { doc = doc, file_doc = file_doc, func=file_doc['functions'][func_name], metricsAST = file_doc.metricsAST, globalMetrics = globalMetrics} )
 					f:close()
 				end
@@ -579,16 +722,18 @@ function start (doc)
                         --END OF MODIFICATION BY MJ
 			
 			for _, funcinfo in pairs({}) do -- not working!! functionlister.getTableOfFunctions(text,true)) do		-- appendinf function informations to the tableOfFunctions
-				funcinfo.path = filepath													-- set path
+				funcinfo.path = filepath:gsub(lfs.currentdir(), "")													-- set path
+
 				metricinfo.NOF = metricinfo.NOF + 1											-- set metrics about functions
 				if funcinfo.fcntype == "global" then metricinfo.NOGF = metricinfo.NOGF + 1 end
 				if funcinfo.fcntype == "local"  then metricinfo.NOLF = metricinfo.NOLF + 1 end
 			end
-			print("processing: "..filepath) --TODO DELETE STATIC LOG PRINT
+			--print("processing: "..filepath) --TODO DELETE STATIC LOG PRINT
 			--MODIFICATION ///
 			
 			-- assembly the filename
-			local filename = out_file(file_doc.name)
+			local filename = out_file(file_doc.name:gsub(lfs.currentdir(), ""))
+
 			logger:info(string.format("generating file `%s'", filename))
 			local f = lfs.open(filename, "w")
 			assert(f, string.format("could not open `%s' for writing", filename))
@@ -639,8 +784,24 @@ function start (doc)
 	f:close()
 	-- \\\ MODIFICATION ///
 
+--KARASEK
+	--CHECK
+	local checks = { name = "index.html" }
+	local f = lfs.open(options.output_dir.."check/index.html", "w")
+	assert(f, string.format("could not open diagram/index.html for writing"))
+	io.output(f)
+	include("indexOfChecks.lp", { doc = doc, checks = analysis_results} ) -- -- MODIF (Ivan Simko) - added globalMetrics
+	f:close()
 
-	
+	--DIAGRAMS
+	local diagrams = { name = "index.html" }
+	local f = lfs.open(options.output_dir.."diagram/index.html", "w")
+	assert(f, string.format("could not open diagram/index.html for writing"))
+	io.output(f)
+	include("indexOfDiagrams.lp", { doc = doc, diagrams = diagram_results} ) -- -- MODIF (Ivan Simko) - added globalMetrics
+	f:close()
+
+
 	-- copy extra files
 	file_copy("literate.js") --MODIFIED BY: Michal Juranyi
 	file_copy("luadoc.css");

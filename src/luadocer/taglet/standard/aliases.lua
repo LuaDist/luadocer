@@ -16,6 +16,8 @@ local aliases={
 	, ["return"] = {"vrati","vracia","returns"}
 	, ["see"] = nil
 	, ["usage"] = nil
+	-- MOJEEEEEEEE
+	,["uml"] = nil
 }
 
 ---

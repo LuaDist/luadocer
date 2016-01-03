@@ -15,6 +15,7 @@ end
 <%if type(func.param) == "table" and #func.param > 0 then%>
 <h3>Parameters</h3>
 <ul>
+
 	<%for p = 1, #func.param do%>
 	<li>
 	  <%=func.param[p]%>: 		<%=doc.sh(func.param[func.param[p]]) or ""%>
@@ -105,8 +106,14 @@ end
 <% end %>
 
 <% if(file_doc and file_doc.metricsAST) then %>
-	<a href='#' class='toggle_source' onclick="$(this).parent().next().next().slideToggle(); return false;">[ show / hide metrics ]</a>
+	<a href='#' class='toggle_source' onclick="$(this).parent().next().next().next().slideToggle(); return false;">[ show / hide metrics ]</a>
 <% end %>
+
+<% if(func.uml) then %>
+<a href='#' class='toggle_source' onclick="$(this).parent().next().next().slideToggle(); return false;">[ show / hide diagram ]</a> 
+<% end %>
+
+
 
 <% if(func.prettyprint or (file_doc and file_doc.metricsAST)) then %>
 	</div>
@@ -121,7 +128,14 @@ end
 </pre>
 </div>
 <% end %>
-
+<div  style="display: none" id="uml2">
+		<% if (func.uml) then %>
+			<h3>UML Diagram for function <%= (func.name)%></h3>
+			<ul>
+				<a href="<%=luadoc.doclet.html.link((func.uml:gsub("^/","../")),from)%>"><img src="<%=luadoc.doclet.html.link((func.uml:gsub("^/","../")),from)%>"></a>
+			</ul>
+		<% end %>&nbsp;
+		</div>
 <% if(file_doc and file_doc.metricsAST) then %>
 <div class='metrics_wrapper' style='display:none; padding-bottom:10px;'>
 	<% luadoc.doclet.html.include("metrics/metrics_function.lp", { metricsAST = file_doc.metricsAST.luaDoc_functions[func.name], fileAST = file_doc.metricsAST, globalMetrics = globalMetrics, currentModuleName=file_doc.metricsAST.metrics.currentModuleName })%>
