@@ -19,5 +19,5 @@ depends = {
 	"luametrics >= 0.2.1",
 	"luacomments >= 0.2",
 	"lualiterate >= 0.1",
-	"luaplantuml >= 0.1",
+	"lua-plantuml >= 0.1",
 }
