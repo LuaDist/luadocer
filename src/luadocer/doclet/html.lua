@@ -34,6 +34,9 @@ local metrics = require 'metrics.init'
 local luaplantuml = require 'luaplantuml.init'
 if (type(metrics) ~= 'table') then metrics = require 'metrics' end
 
+--MODIFIED BY: Martin Nagy :: Added Smells module
+local smells = require 'smells'
+
 -- MODIFIED BY: Michal Juranyi :: Added 2 modules
 local literate = require 'literate'
 local comments = require 'comments'
@@ -665,6 +668,14 @@ function start (doc)
 	
 	-- MODIF (Ivan Simko) - odstranene ! -> tableofFunctions a tableOfMetrics
 	
+  --MODIFIED BY: Martin Nagy
+  
+  io.stdout:write("Generating smells...\r")
+  local functionAndSize = smells.doSomeStuff(metricsAST_results)
+  io.stdout:write("Generating smells...\t\tOK\n")
+  
+  --END OF MODIFICATION BY Martin Nagy
+	
 	-- Process files
 	if not options.nofiles then
 		for _, filepath in ipairs(doc.files) do
@@ -762,6 +773,15 @@ function start (doc)
 	include("indexOfMetrics.lp", { doc = doc, metrics = globalMetrics, modulenum = #doc.modules , filenum = #doc.files } ) -- MODIF (Ivan Simko) - added globalMetrics
 	f:close()
 	-- \\\ MODIFICATION ///
+  
+  -- SMELLS - Martin Nagy  
+  local smells = { name = "index.html" }
+	local f = lfs.open(options.output_dir.."smells/index.html", "w")
+	assert(f, string.format("could not open smells/index.html for writing"))
+	io.output(f)
+	include("indexOfSmells.lp", { doc = doc, metrics = globalMetrics, modulenum = #doc.modules , filenum = #doc.files, smells = functionAndSize } ) 
+	f:close()
+  -- END OF SMELLS
 
 
 	-- /// MODIFICATION \\\
@@ -808,8 +828,10 @@ function start (doc)
 	file_copy("jquery.js");
 	file_copy("prettyprint.js");
 	file_copy("menu.js");
-	file_copy("highcharts.js")
+	file_copy("highcharts-pie.js")
+	file_copy("highcharts-bar.js")
 	file_copy("jquery-ui.min.js")
+	file_copy("jquery.min.js")
 	file_copy("indexOfFunctions.css")
 	file_copy("jquery-ui-1.8.11.custom.css")	
 end
