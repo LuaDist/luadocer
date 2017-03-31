@@ -76,9 +76,81 @@ $(document).ready(function() {
 			}]
 		}]
 	});
+
+	Highcharts.chart('bar_graph_container2', {
+		chart: {
+			type: 'bar'
+		},
+		title: {
+			text: 'Cyclomatic complexity of functions'
+		},
+		subtitle: {
+			text: '(Sorted descending)'
+		},
+		xAxis: {
+			categories: [
+				<% for _, n in pairs(smells.cyclomatic) do %>
+					['<%=n.name%>'],
+				<% end %>
+			],
+			title: {
+		    		text: null
+			}
+		},
+		yAxis: {
+			min: 0,
+			title: {
+			   	text: 'Cyclomatic complexity',
+			    	align: 'high'
+			},
+			labels: {
+			    	overflow: 'justify'
+			}
+		},
+		plotOptions: {
+			bar: {
+		    		dataLabels: {
+					enabled: true
+		    		}
+			}
+		},
+		legend: {
+			layout: 'vertical',
+			align: 'right',
+			verticalAlign: 'top',
+			x: -40,
+			y: 80,
+			floating: true,
+			borderWidth: 1,
+			backgroundColor: '#FFFFFF',
+			shadow: true
+		},
+		credits: {
+			enabled: false
+		},
+		series: [{
+			name: 'Cyclomatic complexity',
+			data: [
+				<% for _, n in pairs(smells.cyclomatic) do %>
+					<%=n.cyclomatic%>,
+				<% end %>
+			],
+			zones: [{
+	    			value: 4,
+	    			color: 'green'
+			},{
+	    			value: 6,
+	    			color: 'orange'
+			},{
+	    			color: 'red'
+			}]
+		}]
+	});
 });
 </script>
 
 <br />
 <hr/>
 <div id="bar_graph_container" style="width: 800px; height: <%=(smells.totalFunctions*20) %>px; min-height: 400px; margin: 0 auto"></div>
+<br />
+<div id="bar_graph_container2" style="width: 800px; height: <%=(smells.totalFunctions*20) %>px; min-height: 400px; margin: 0 auto"></div>

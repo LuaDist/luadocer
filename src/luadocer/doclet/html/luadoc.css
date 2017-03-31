@@ -698,9 +698,17 @@ table.smell_table td
 	padding-left: 10px;
 	padding-right: 10px;
 }
+table.smell_table td.file
+{
+	min-width: 25px;
+}
 table.smell_table td.name
 {
 	background-color: #f0f0f0;
 	min-width: 250px;
 }
-table.smell_table td.value { width: 50%; }
+table.smell_table td.value
+{
+	min-width: 100px;
+	width: 50%;
+}

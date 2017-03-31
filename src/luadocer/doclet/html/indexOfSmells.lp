@@ -27,16 +27,25 @@
 
 <div id="tabs">
 	<ul>
+		<li><a href="#moduleSmells"><span>Module Smells</span></a></li>
 		<li><a href="#longMethod"><span>Long Method</span></a></li>
 		<li><a href="#manyParameters"><span>Many Parameters</span></a></li>	
 	</ul>
 
-    	<div id="longMethod">
+    <div id="moduleSmells">
+		<span class="tohide">
+			<div class='metrics_wrapper'>
+				<%=luadoc.doclet.html.include("smells/moduleSmells.lp", { smells = moduleSmells })%>
+			</div>
+		</span>
+	</div>
+
+	<div id="longMethod">
 		<span class="tohide">
 			<div class='metrics_wrapper'>
 				<h2>Metrics in Code Smells</h2>
 					<div style="float:left; width: 330px;">
-						<%=luadoc.doclet.html.include("smells/longMethodTable.lp", { smells = smells.longMethod })%>
+						<%=luadoc.doclet.html.include("smells/longMethodTable.lp", { smells = smells })%>
 					</div>
 					<div style="clear:both;"></div>
 					<br />
@@ -47,6 +56,7 @@
 			</div>
 		</span>
 	</div>
+
 	<div id="manyParameters">
 		<span class="tohide">
 			<div class='metrics_wrapper'>

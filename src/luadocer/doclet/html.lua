@@ -673,6 +673,8 @@ function start (doc)
   io.stdout:write("Generating smells...\r")
   local functionAndSize = smells.doSomeStuff(metricsAST_results)
   io.stdout:write("Generating smells...\t\tOK\n")
+  local moduleSmells = {MI = smells.countMI(metricsAST_results)}
+    io.stdout:write(moduleSmells.MI .. "\n")
   
   --END OF MODIFICATION BY Martin Nagy
 	
@@ -779,7 +781,7 @@ function start (doc)
 	local f = lfs.open(options.output_dir.."smells/index.html", "w")
 	assert(f, string.format("could not open smells/index.html for writing"))
 	io.output(f)
-	include("indexOfSmells.lp", { doc = doc, metrics = globalMetrics, modulenum = #doc.modules , filenum = #doc.files, smells = functionAndSize } ) 
+	include("indexOfSmells.lp", { doc = doc, smells = functionAndSize, moduleSmells = moduleSmells } ) 
 	f:close()
   -- END OF SMELLS
 
@@ -834,4 +836,5 @@ function start (doc)
 	file_copy("jquery.min.js")
 	file_copy("indexOfFunctions.css")
 	file_copy("jquery-ui-1.8.11.custom.css")	
+	file_copy("fileIcon.jpg")	
 end
