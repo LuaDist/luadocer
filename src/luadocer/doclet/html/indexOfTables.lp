@@ -1,9 +1,4 @@
-<%
-local extra_javascript = {'jquery-ui.min.js'}
-local extra_css = {'jquery-ui-1.8.11.custom.css','indexOfFunctions.css'}
-%>
-
-<% luadoc.doclet.html.include("header.lp", {title="List of tables", doc=doc, file_doc={name="dummy"}, location={{"List of tables","index.html"}}, extra_javascript= extra_javascript, extra_css= extra_css }) %>
+<% luadoc.doclet.html.include("header.lp", {title="List of tables", doc=doc, file_doc={name="dummy"}, location={{"List of tables","index.html"}}, extra_javascript =  {'jquery-ui.min.js'}, extra_css = {'jquery-ui-1.8.11.custom.css','indexOfFunctions.css'} }) %>
 
 	<script type="text/javascript">
 		$(document).ready(function() {

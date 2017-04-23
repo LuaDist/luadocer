@@ -35,7 +35,35 @@
     <div id="moduleSmells">
 		<span class="tohide">
 			<div class='metrics_wrapper'>
-				<%=luadoc.doclet.html.include("smells/moduleSmells.lp", { smells = moduleSmells })%>
+				<h2>Maintainability index (MI)</h2>
+				<div style="float:left; display: block">
+					<p>
+						MI = 171 - 5.2ln(<b>aV</b>) - 0.23<b>aV(g')</b> - 16.2ln(<b>aLOC</b>) - 50sin[sqrt(2.4 - <b>perCM</b>)] <br />
+						<ul>
+							<li><b>aV</b> = average Halstead volume V per module</li>
+							<li><b>aV(g')</b> = average cyclomatic complexity per module</li>
+							<li><b>aLOC</b> = average count of lines of code (LOC) per module</li>
+							<li><b>perCM</b> = average percent of lines of comments per module</li>
+						</ul>
+					</p>
+					<%=MITable%>
+				</div>
+				<div style="clear:both;"></div>
+				<h2>Code flagged and investigated for possible refactoring</h2>
+				<div style="float:left; display: block">
+					<p>
+						In 1999, Rosenberg et al. of NASA published guidelines specifying that any class that meets at least two of the following criteria needs to be flagged and investigated for possible refactoring:
+						<ul>
+							<li><b>Response for module</b> > 100</li>
+							<li><b>Coupling between modules</b> > 5</li>
+							<li><b>Response for module</b> > 5 times the <b>number of methods</b> in the module</li>
+							<li><b>Weighted methods per module</b> > 100</li>
+							<li><b>Number of methods</b> > 40</li>
+						</ul>
+					</p>
+					<%=moduleTables%>
+				</div>
+				<div style="clear:both;"></div>
 			</div>
 		</span>
 	</div>
@@ -45,13 +73,29 @@
 			<div class='metrics_wrapper'>
 				<h2>Metrics in Code Smells</h2>
 					<div style="float:left; width: 330px;">
-						<%=luadoc.doclet.html.include("smells/longMethodTable.lp", { smells = smells })%>
+						<%=longMethodTable%>
+						<%=cycloTable%>
 					</div>
 					<div style="clear:both;"></div>
-					<br />
 				<h2>Graphical representation</h2>
-					<%=luadoc.doclet.html.include("smells/longMethodGraph.lp", { smells = smells })%>
-					<br />
+					<hr/>
+					<p>Criteria for detecting long method code smell:</p>
+					<p>Lines of source code</p>
+					<ul>
+						<li><b><45 lines of source code:</b> No smell detected <font color="green">(Green)</font></li>
+						<li><b><55 but >45 lines of source code:</b> Code smell detected <font color="orange">(Orange)</font></li>
+						<li><b>>55 lines of source code:</b> Serious code smell detected <font color="red">(Red)</font></li>
+					</ul>
+					<p>Cyclomatic complexity</p>
+					<ul>
+						<li><b>1 - 4:</b> A simple procedure <font color="green">(Green)</font></li>
+						<li><b>5 - 10:</b> A well-structured and stable procedure <font color="green">(Green)</font></li>
+						<li><b>11 - 20:</b> A more complex procedure <font color="orange">(Orange)</font></li>
+						<li><b>21 - 50:</b> A complex procedure, worrisome <font color="red">(Red)</font></li>
+						<li><b>>50:</b>	An error-prone, extremely troublesome, untestable procedure <font color="red">(Red)</font></li>
+					</ul>
+					<%=longMethodGraph%>
+					<%=cycloGraph%>
 					<div style="clear: both;"></div>
 			</div>
 		</span>
@@ -61,13 +105,20 @@
 		<span class="tohide">
 			<div class='metrics_wrapper'>
 				<h2>Metrics in Code Smells</h2>
-					<div style="float:left; width: 330px;"><%=luadoc.doclet.html.include("smells/manyParametersTable.lp", { smells = smells.manyParameters })%>
+					<div style="float:left; width: 330px;">
+						<%=manyParamsTable%>
 					</div>
 					<div style="clear:both;"></div>
 					<br />
 				<h2>Graphical representation</h2>
-					<%=luadoc.doclet.html.include("smells/manyParametersGraph.lp", { smells = smells })%>
-					<br />
+					<hr/>
+					<p>Criteria for detecting many parameters code smell</p>
+					<ul>
+						<li><b><5 parameters:</b> No smell detected <font color="green">(Green)</font></li>
+						<li><b><10 but >5 parameters:</b> Code smell detected <font color="orange">(Orange)</font></li>
+						<li><b>>10 parameters:</b> Serious code smell detected <font color="red">(Red)</font></li>
+					</ul>
+					<%=manyParamsGraph%>
 					<div style="clear: both;"></div>
 			</div>
 		</span>
