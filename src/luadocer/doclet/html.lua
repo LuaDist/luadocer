@@ -792,7 +792,15 @@ function start (doc)
 	local f = lfs.open(options.output_dir.."functionlist/index.html", "w")
 	assert(f, string.format("could not open functionlist/index.html for writing"))
 	io.output(f)
-	include("indexOfFunctions.lp", { doc = doc, functions = functions, metrics = globalMetrics} ) -- -- MODIF (Ivan Simko) - added globalMetrics
+
+	local functionsParam = {
+		doc = doc,
+		functionList = controll.createFunctionTableList(globalMetrics, "functionDefinitions", doc, file_link),
+		docFunctionList = controll.createDocumentedFunctionTableList(globalMetrics, "functionDefinitions", doc, file_link, 1),
+		nDocFunctionList = controll.createDocumentedFunctionTableList(globalMetrics, "functionDefinitions", doc, file_link, 0)
+	}
+
+	include("indexOfFunctions.lp", functionsParam) -- -- MODIF (Ivan Simko) - added globalMetrics
 	f:close()
 	
 	-- METRICS
@@ -845,7 +853,15 @@ function start (doc)
 	local f = lfs.open(options.output_dir.."tablelist/index.html", "w")
 	assert(f, string.format("could not open tablelist/index.html for writing"))
 	io.output(f)
-	include("indexOfTables.lp", { doc = doc, metrics = globalMetrics} )
+
+	local tableParam = {
+		doc = doc,
+		tableList = controll.createFunctionTableList(globalMetrics, "tables", doc, file_link),
+		docTableList = controll.createDocumentedFunctionTableList(globalMetrics, "tables", doc, file_link, 1),
+		nDocTableList = controll.createDocumentedFunctionTableList(globalMetrics, "tables", doc, file_link, 0)
+	} 
+
+	include("indexOfTables.lp", tableParam)
 	f:close()
 	-- \\\ MODIFICATION ///
 
@@ -857,13 +873,13 @@ function start (doc)
 	io.output(f)
 
 	local customParam = {
-		 doc = doc,
-		 todoComments = controll.createCustomCommentList(doc, "todo", file_link),
-		 bugComments = controll.createCustomCommentList(doc, "bug", file_link),
-		 questionComments = controll.createCustomCommentList(doc, "question", file_link),
-		 fixmeComments = controll.createCustomCommentList(doc, "fixme", file_link),
-		 infoComments = controll.createCustomCommentList(doc, "info", file_link),
-		 howComments = controll.createCustomCommentList(doc, "how", file_link)
+		doc = doc,
+		todoComments = controll.createCustomCommentList(doc, "todo", file_link),
+		bugComments = controll.createCustomCommentList(doc, "bug", file_link),
+		questionComments = controll.createCustomCommentList(doc, "question", file_link),
+		fixmeComments = controll.createCustomCommentList(doc, "fixme", file_link),
+		infoComments = controll.createCustomCommentList(doc, "info", file_link),
+		howComments = controll.createCustomCommentList(doc, "how", file_link)
 	}
 
 	include("custom.lp", customParam)
