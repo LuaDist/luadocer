@@ -34,12 +34,18 @@ local metrics = require 'metrics.init'
 local luaplantuml = require 'luaplantuml.init'
 if (type(metrics) ~= 'table') then metrics = require 'metrics' end
 
---MODIFIED BY: Martin Nagy :: Added Controll module
-local controll = require 'controll'
-
 -- MODIFIED BY: Michal Juranyi :: Added 2 modules
 local literate = require 'literate'
 local comments = require 'comments'
+
+--MODIFIED BY: Martin Nagy :: Metrics module edit. Table templates added.
+local template = require 'metrics.templates.init'
+local docTemplates = require 'metrics.templates.docMetricsTemplates'
+local smellTemplates = require 'metrics.templates.smellTemplates'
+local funcTableTemplate = require 'metrics.templates.funcTableTemplates'
+
+--MODIFIED BY: Martin Nagy :: Other templates.
+local luadocerTemplates = require 'luadocer.doclet.templates'
 
 --[[
 local metrics_loader = loadstring('require("metrics")');
@@ -92,6 +98,12 @@ function cutPathToSources(path)
   
   return path
   
+end
+
+local function addLinksToTemplate(template)
+
+	return string.gsub(template, "#|type=fileLink|to=([^|].-)|from=([^|].-)|#", function(a, b) return file_link(a, b) end)
+
 end
 	
 --MODIFICATION ///
@@ -217,7 +229,7 @@ function file_link (to, from)
 	assert(to)
 	from = from or ""
 	
-  to = cutPathToSources(to)
+  	to = cutPathToSources(to)
   
 	local href = to
 	
@@ -226,6 +238,8 @@ function file_link (to, from)
 	href = "files/	" .. href
 	string.gsub(from, "/", function () href = "../" .. href end)
 	href = href:gsub(lfs.currentdir(), "")
+
+	href = string.gsub(href, "\t", "")
 
 	return href
 end
@@ -665,10 +679,33 @@ function start (doc)
 	--MODIFICATION \\\ (Ivan Simko) pridane globalne metriky ... a metriky ulozene do kazdej file_doc tabulky
 	io.stdout:write("Generating metrics...\r")
 	io.stdout:flush()
-	local metricsAST_results, globalMetrics = controll.createASTAndMerge(doc, cutPathToSources)
 
+	local fileList = {}
 
-  
+	for _, filepath in ipairs(doc.files) do
+		table.insert(fileList, filepath)
+	end
+
+	local globalMetrics = template.createASTAndMerge(fileList, options.files)
+	template.makeSomething(globalMetrics, options.output_dir .. "sth.html")
+
+	for _, filepath in ipairs(doc.files) do
+	    
+	    local text = pkio.ReadFile(filepath)
+	    local formatted_text = formatter.format_text(text);
+
+	    -- potrebne nahradit windows newlines za unix newlines, inak dvojite nove riadky!! [LEG zoberie ako SPACE separatne \r aj \n, moderne browsery ciste \r interpretuju ako newline -> dvojite nove riadky]
+	    formatted_text = formatted_text:gsub("\r\n","\n");
+	    
+	    local AST = globalMetrics.file_AST_list[cutPathToSources(filepath)]
+      
+	    local file_doc = doc.files[filepath]
+	    file_doc.metricsAST = AST
+	    file_doc.formatted_text = formatted_text;
+
+	    comments.extendAST(AST) --MODIFIED BY: Michal Juranyi
+	end
+   
         --MODIFIED BY: Michal Juranyi
 	--_ listOfFunctions is globalMetrics.functionDefinitions table converted to associative array
 	local listOfFunctions = {}
@@ -795,10 +832,14 @@ function start (doc)
 
 	local functionsParam = {
 		doc = doc,
-		functionList = controll.createFunctionTableList(globalMetrics, "functionDefinitions", doc, file_link),
-		docFunctionList = controll.createDocumentedFunctionTableList(globalMetrics, "functionDefinitions", doc, file_link, 1),
-		nDocFunctionList = controll.createDocumentedFunctionTableList(globalMetrics, "functionDefinitions", doc, file_link, 0)
+		functionList = funcTableTemplate.createFunctionTableList(globalMetrics, "functionDefinitions", false),
+		docFunctionList = funcTableTemplate.createDocumentedFunctionTableList(globalMetrics, "functionDefinitions", 1, false),
+		nDocFunctionList = funcTableTemplate.createDocumentedFunctionTableList(globalMetrics, "functionDefinitions", 0, false)
 	}
+
+	functionsParam.functionList = addLinksToTemplate(functionsParam.functionList)
+	functionsParam.docFunctionList = addLinksToTemplate(functionsParam.docFunctionList)
+	functionsParam.nDocFunctionList = addLinksToTemplate(functionsParam.nDocFunctionList)
 
 	include("indexOfFunctions.lp", functionsParam) -- -- MODIF (Ivan Simko) - added globalMetrics
 	f:close()
@@ -811,14 +852,14 @@ function start (doc)
 
 	local metricsParam = {
 		doc = doc,
-		LOCTable = controll.createLOCTable(globalMetrics.LOC, #doc.files, #doc.modules),
-		docMetricsTable = controll.createDocMetricsTable(globalMetrics.documentMetrics),
-		halsteadTable = controll.createHalsteadTable(globalMetrics.halstead),
-		statementsTable = controll.createStatementsTable(globalMetrics.statements),
-		functionsTable = controll.createFunctionsTable(globalMetrics, #doc.files, cutPathToSources),
-		moduleLenGraph = controll.createModuleLenGraph(globalMetrics),
-		fileLenGraph = controll.createFileLenGraph(globalMetrics, cutPathToSources),
-		couplingTable = controll.createCouplingTable(globalMetrics)
+		LOCTable = docTemplates.createLOCTable(globalMetrics.LOC, globalMetrics.fileNum, globalMetrics.moduleNum),
+		docMetricsTable = docTemplates.createDocMetricsTable(globalMetrics.documentMetrics),
+		halsteadTable = docTemplates.createHalsteadTable(globalMetrics.halstead),
+		statementsTable = docTemplates.createStatementsTable(globalMetrics.statements),
+		functionsTable = docTemplates.createFunctionsTable(globalMetrics, globalMetrics.fileNum),
+		moduleLenGraph = docTemplates.createModuleLenGraph(globalMetrics, false),
+		fileLenGraph = docTemplates.createFileLenGraph(globalMetrics, false),
+		couplingTable = docTemplates.createCouplingTable(globalMetrics)
 	}
 
 	include("indexOfMetrics.lp", metricsParam ) -- MODIF (Ivan Simko) - added globalMetrics
@@ -832,14 +873,14 @@ function start (doc)
 
 	local smellsParam = {
 		doc = doc,
-		longMethodTable = controll.createLongMethodTable(globalMetrics),
-		cycloTable = controll.createCycloTable(globalMetrics),
-		manyParamsTable = controll.createManyParamsTable(globalMetrics),
-		moduleTables = controll.createModuleTables(globalMetrics),
-		MITable = controll.createMITable(globalMetrics),
-		longMethodGraph = controll.createLongMethodGraph(globalMetrics),
-		cycloGraph = controll.createCycloGraph(globalMetrics),
-		manyParamsGraph = controll.createManyParamsGraph(globalMetrics) 
+		longMethodTable = smellTemplates.createLongMethodTable(globalMetrics),
+		cycloTable = smellTemplates.createCycloTable(globalMetrics),
+		manyParamsTable = smellTemplates.createManyParamsTable(globalMetrics),
+		moduleTables = smellTemplates.createModuleTables(globalMetrics),
+		MITable = smellTemplates.createMITable(globalMetrics),
+		longMethodGraph = smellTemplates.createLongMethodGraph(globalMetrics, false),
+		cycloGraph = smellTemplates.createCycloGraph(globalMetrics, false),
+		manyParamsGraph = smellTemplates.createManyParamsGraph(globalMetrics, false) 
 	}
 
 	include("indexOfSmells.lp", smellsParam ) 
@@ -856,10 +897,14 @@ function start (doc)
 
 	local tableParam = {
 		doc = doc,
-		tableList = controll.createFunctionTableList(globalMetrics, "tables", doc, file_link),
-		docTableList = controll.createDocumentedFunctionTableList(globalMetrics, "tables", doc, file_link, 1),
-		nDocTableList = controll.createDocumentedFunctionTableList(globalMetrics, "tables", doc, file_link, 0)
+		tableList = funcTableTemplate.createFunctionTableList(globalMetrics, "tables", false),
+		docTableList = funcTableTemplate.createDocumentedFunctionTableList(globalMetrics, "tables", 1, false),
+		nDocTableList = funcTableTemplate.createDocumentedFunctionTableList(globalMetrics, "tables", 0, false)
 	} 
+
+	tableParam.tableList = addLinksToTemplate(tableParam.tableList)
+	tableParam.docTableList = addLinksToTemplate(tableParam.docTableList)
+	tableParam.nDocTableList = addLinksToTemplate(tableParam.nDocTableList)
 
 	include("indexOfTables.lp", tableParam)
 	f:close()
@@ -874,12 +919,12 @@ function start (doc)
 
 	local customParam = {
 		doc = doc,
-		todoComments = controll.createCustomCommentList(doc, "todo", file_link),
-		bugComments = controll.createCustomCommentList(doc, "bug", file_link),
-		questionComments = controll.createCustomCommentList(doc, "question", file_link),
-		fixmeComments = controll.createCustomCommentList(doc, "fixme", file_link),
-		infoComments = controll.createCustomCommentList(doc, "info", file_link),
-		howComments = controll.createCustomCommentList(doc, "how", file_link)
+		todoComments = luadocerTemplates.createCustomCommentList(doc, "todo", file_link),
+		bugComments = luadocerTemplates.createCustomCommentList(doc, "bug", file_link),
+		questionComments = luadocerTemplates.createCustomCommentList(doc, "question", file_link),
+		fixmeComments = luadocerTemplates.createCustomCommentList(doc, "fixme", file_link),
+		infoComments = luadocerTemplates.createCustomCommentList(doc, "info", file_link),
+		howComments = luadocerTemplates.createCustomCommentList(doc, "how", file_link)
 	}
 
 	include("custom.lp", customParam)
@@ -903,8 +948,8 @@ function start (doc)
 
 	local diagramParam = {
 		doc = doc,
-		globalDiagram = controll.createUMLDiagrams(diagram_results, true, link),
-		functionDiagram = controll.createUMLDiagrams(diagram_results, false, link)
+		globalDiagram = luadocerTemplates.createUMLDiagrams(diagram_results, true, link),
+		functionDiagram = luadocerTemplates.createUMLDiagrams(diagram_results, false, link)
 	}
 
 	include("indexOfDiagrams.lp", diagramParam ) -- -- MODIF (Ivan Simko) - added globalMetrics
@@ -917,10 +962,8 @@ function start (doc)
 	file_copy("jquery.js");
 	file_copy("prettyprint.js");
 	file_copy("menu.js");
-	file_copy("highcharts-pie.js")
-	file_copy("highcharts-bar.js")
+	file_copy("highcharts.js")
 	file_copy("jquery-ui.min.js")
-	file_copy("jquery.min.js")
 	file_copy("indexOfFunctions.css")
 	file_copy("jquery-ui-1.8.11.custom.css")	
 	file_copy("fileIcon.jpg")	

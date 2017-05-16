@@ -1,4 +1,4 @@
-<% luadoc.doclet.html.include("header.lp", {title="Project metrics", doc=doc, file_doc={name="dummy"}, location={{"Project metrics","index.html"}}, extra_javascript = {'highcharts-pie.js'}}) %>
+<% luadoc.doclet.html.include("header.lp", {title="Project metrics", doc=doc, file_doc={name="dummy"}, location={{"Project metrics","index.html"}}, extra_javascript = {'highcharts.js'}}) %>
 
 <script type="text/javascript">
 		$(document).ready(function() {	

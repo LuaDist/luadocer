@@ -1,4 +1,4 @@
-<% luadoc.doclet.html.include("header.lp", {title="Project code quality", doc=doc, file_doc={name="dummy"}, location={{"Project metrics","index.html"}}, extra_javascript = {'highcharts-bar.js', 'jquery-ui.min.js'}, extra_css = {'jquery-ui-1.8.11.custom.css', 'indexOfFunctions.css'}}) %>
+<% luadoc.doclet.html.include("header.lp", {title="Project code quality", doc=doc, file_doc={name="dummy"}, location={{"Project metrics","index.html"}}, extra_javascript = {'highcharts.js', 'jquery-ui.min.js'}, extra_css = {'jquery-ui-1.8.11.custom.css', 'indexOfFunctions.css'}}) %>
 
 	<script type="text/javascript">
 		$(document).ready(function() {	
@@ -50,7 +50,7 @@
 				</div>
 				<div style="clear:both;"></div>
 				<h2>Code flagged and investigated for possible refactoring</h2>
-				<div style="float:left; display: block">
+				<div style="float:left; display: block; width: 500px">
 					<p>
 						In 1999, Rosenberg et al. of NASA published guidelines specifying that any class that meets at least two of the following criteria needs to be flagged and investigated for possible refactoring:
 						<ul>
