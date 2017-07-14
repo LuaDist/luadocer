@@ -670,3 +670,45 @@ div.function_detail h3 {
 	overflow: auto;
 	font-family: "Andale Mono",monospace;
 }
+
+table.smell_table
+{
+	margin-left: 0px; margin-right: auto;
+	width: 500px;
+	border-width: 1px;
+	border-style: solid;
+	border-color: #cccccc;
+	border-collapse: collapse;
+}
+table.smell_table th
+{
+	background-color: #e7e7e7;
+	text-decoration: bold;
+	border-width: 1px;
+	padding: 3px;
+	border-style: solid;
+	border-color: #cccccc;
+}
+table.smell_table td
+{
+	border-width: 1px;
+	padding: 3px;
+	border-style: solid;
+	border-color: #cccccc;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+table.smell_table td.file
+{
+	min-width: 25px;
+}
+table.smell_table td.name
+{
+	background-color: #f0f0f0;
+	min-width: 250px;
+}
+table.smell_table td.value
+{
+	min-width: 100px;
+	width: 50%;
+}

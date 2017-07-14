@@ -15,13 +15,13 @@
 local print, package, require, assert, getfenv, ipairs, loadstring, pairs, setfenv, tostring, tonumber, type, os, pcall = print, package, require, assert, getfenv, ipairs, loadstring, pairs, setfenv, tostring, tonumber, type, os, pcall
 module ("luadocer.doclet.html")
 
-local io = require"io"
+local io = require "io"
 local lfs = require "lfs"
 local lp = require "luadocer.lp"
 local util = require "luadocer.util"
-local luadoc = require"luadocer"
-local string = require"string"
-local table = require"table"
+local luadoc = require "luadocer"
+local string = require "string"
+local table = require "table"
 
 
 --MODIFICATION \\\
@@ -38,6 +38,15 @@ if (type(metrics) ~= 'table') then metrics = require 'metrics' end
 local literate = require 'literate'
 local comments = require 'comments'
 
+--MODIFIED BY: Martin Nagy :: Metrics module edit. Table templates added.
+local template = require 'metrics.templates.init'
+local docTemplates = require 'metrics.templates.docMetricsTemplates'
+local smellTemplates = require 'metrics.templates.smellTemplates'
+local funcTableTemplate = require 'metrics.templates.funcTableTemplates'
+
+--MODIFIED BY: Martin Nagy :: Other templates.
+local luadocerTemplates = require 'luadocer.doclet.templates'
+
 --[[
 local metrics_loader = loadstring('require("metrics")');
 local metrics=pcall(metrics_loader);
@@ -45,6 +54,66 @@ if(not metrics) then
 	metrics=require("metrics.init");
 end
 --]]
+
+--- Function that takes path to source file and directory that contains these souce files and find the tree structure from directory, returns number where the tree structure begins or nil when pattern not found
+-- @param sample Sample path to source file
+-- @param pattern Path to root directory of analysed source files
+-- @author Martin Nagy
+-- @return start of the tree structure in sample string or nil when pattern not found
+local function customStringFind(sample, pattern)
+  local i = 1
+  
+  if(#pattern > #sample) then  --If path to root directory is longer than path to file
+    return nil 
+  end
+  
+  for i = 1, #pattern do --Looping trough paths and looking for match
+    
+    local sampleChar = string.sub(sample, i, i)
+    local patternChar = string.sub(pattern, i, i)
+    
+    if(sampleChar ~= patternChar) then --If paths does not match
+      return nil
+    end
+  end
+  
+  return (#pattern + 1) --If paths matches returns start of sample which is not included in pattern
+  
+end
+
+--- Function takes path and returns that part of the path which is not contained in one of the files path
+-- @param path Path to source file
+-- @author Martin Nagy
+-- @return subpart of the path when success, full path when directory substring not found
+function cutPathToSources(path)
+  
+  for _, name in pairs(options.files) do
+
+    local index = name:match('^.*()/') --Checks for last /
+    name = string.sub(name, 0, index)
+
+    local res = customStringFind(path, name)
+    if(res ~= nil) then --If file is in directory
+      
+      return ('/' .. string.sub(path, res)) --Returns substring
+      
+    end
+  end
+  
+  return path --If ndirectory does not contain file returns full path
+  
+end
+
+--- Function takes template and create hypertext links to make documentation interactive
+-- @param template Template to be enhanced
+-- @author Martin Nagy
+-- @return Template with working hypertext links
+local function addLinksToTemplate(template)
+
+	--Find sequence of chars representing link to another file in documentation and substitute for working link
+	return string.gsub(template, "#|type=fileLink|to=([^|].-)|from=([^|].-)|#", function(a, b) return file_link(a, b) end)
+
+end
 	
 --MODIFICATION ///
 -------------------------------------------------------------------------------
@@ -123,7 +192,9 @@ end
 function link (html, from)
 	html = html:gsub(lfs.currentdir(), "")
 	local h = html
+  
 	from = from or ""
+  
 	string.gsub(from, "/", function () h = "../" .. h end)
 
 	return h
@@ -167,6 +238,8 @@ function file_link (to, from)
 	assert(to)
 	from = from or ""
 	
+  	to = cutPathToSources(to)
+  
 	local href = to
 	
 	href = string.gsub(href, "lua$", "html")
@@ -174,6 +247,8 @@ function file_link (to, from)
 	href = "files/	" .. href
 	string.gsub(from, "/", function () href = "../" .. href end)
 	href = href:gsub(lfs.currentdir(), "")
+
+	href = string.gsub(href, "\t", "")
 
 	return href
 end
@@ -339,6 +414,9 @@ function check(string)
 	if string ~= nil then
 		for k,v in ipairs(string) do
 			filepath_temp[k] = v:gsub(lfs.currentdir(), "")
+      
+      filepath_temp[k] = cutPathToSources(filepath_temp[k])
+      
 		end
 	end
 	return filepath_temp
@@ -357,7 +435,6 @@ function start (doc)
 
 		if text~= nil then
 			text = text:gsub(lfs.currentdir(), "")
-			-- print(text)
 		end
 		if(text==nil) then
 			return nil;
@@ -518,6 +595,7 @@ function start (doc)
 	
 	for k,v in pairs(file_hierarchy) do
 		k = k:gsub(lfs.currentdir(), "")
+    k = cutPathToSources(k)
 		local filename = options.output_dir.."files"..k.."/file_listing.lua.lua.lua.html";  -- NOT OK if the directory contains file named file_listing.lua.lua.lua.lua -> becomes file_listing.lua.lua.lua.html -> TODO: generate unique filename somehow or store in a different folder (e.g listings/)
 
 		logger:info(string.format("generating file `%s'", filename))
@@ -589,9 +667,10 @@ function start (doc)
 			settings.plantuml_path = options.plantuml_path .. " %s"
 			settings.dir_path = util.getabsolutepath(options.output_dir) .. '/'
 			settings.current_file = filepath
-			
+      
+      settings.extended_path = cutPathToSources(filepath)
+      
 			-- parse extended_path
-			settings.extended_path = filepath:gsub(lfs.currentdir(), "")
 			settings.extended_path = settings.extended_path:gsub("^(.+)/.-$","%1/")
 			settings.extended_path = settings.extended_path:gsub("^\/","")
 			
@@ -609,29 +688,35 @@ function start (doc)
 	--MODIFICATION \\\ (Ivan Simko) pridane globalne metriky ... a metriky ulozene do kazdej file_doc tabulky
 	io.stdout:write("Generating metrics...\r")
 	io.stdout:flush()
-	local metricsAST_results = {}
+
+	--MODIFIED BY: Martin Nagy - edited global metrics generation (through metrics.templates)
+	local fileList = {} --Created file list to generate metrics
 
 	for _, filepath in ipairs(doc.files) do
-		
-		local text = pkio.ReadFile(filepath)
-		local formatted_text = formatter.format_text(text);
-
-		-- potrebne nahradit windows newlines za unix newlines, inak dvojite nove riadky!! [LEG zoberie ako SPACE separatne \r aj \n, moderne browsery ciste \r interpretuju ako newline -> dvojite nove riadky]
-		formatted_text=formatted_text:gsub("\r\n","\n");
-		local AST = metrics.processText(formatted_text)
-			
-		local file_doc = doc.files[filepath]
-		file_doc.metricsAST = AST
-		file_doc.formatted_text = formatted_text;
-			
-		metricsAST_results[filepath] = AST
-
-		comments.extendAST(AST) --MODIFIED BY: Michal Juranyi
+		table.insert(fileList, filepath)
 	end
-	--MODIFICATION ///
-	
-	local globalMetrics = metrics.doGlobalMetrics(metricsAST_results)
 
+	--Generate metrics to globalMetrics
+	local globalMetrics = template.createASTAndMerge(fileList, options.files)
+
+	--Loop to extend AST with literate module
+	for _, filepath in ipairs(doc.files) do
+	    
+	    local text = pkio.ReadFile(filepath)
+	    local formatted_text = formatter.format_text(text);
+
+	    -- potrebne nahradit windows newlines za unix newlines, inak dvojite nove riadky!! [LEG zoberie ako SPACE separatne \r aj \n, moderne browsery ciste \r interpretuju ako newline -> dvojite nove riadky]
+	    formatted_text = formatted_text:gsub("\r\n","\n");
+	    
+	    local AST = globalMetrics.file_AST_list[cutPathToSources(filepath)] --Using generated AST instead of creating new one
+      
+	    local file_doc = doc.files[filepath]
+	    file_doc.metricsAST = AST
+	    file_doc.formatted_text = formatted_text;
+
+	    comments.extendAST(AST) --MODIFIED BY: Michal Juranyi
+	end
+   
         --MODIFIED BY: Michal Juranyi
 	--_ listOfFunctions is globalMetrics.functionDefinitions table converted to associative array
 	local listOfFunctions = {}
@@ -672,6 +757,7 @@ function start (doc)
 			local file_doc = doc.files[filepath]
 			file_doc.file_name=file_doc.name:match("[^/]+$");
 			file_doc.name = file_doc.name:gsub(lfs.currentdir(), "")
+      file_doc.name = cutPathToSources(file_doc.name)
 			--MODIFICATION \\\ (Ivan Simko) -> variables formatted_text and metricsAST are taken from file_doc
 			local highlighter_pt=nil;
 			if(file_doc.formatted_text) then
@@ -705,7 +791,7 @@ function start (doc)
 					end
 
 					logger:info(string.format("generating function detail: file `%s'", filename))
-					
+      
 					local f = lfs.open(options.output_dir:gsub("/+","/").."files"..file_doc.name:gsub("[^\/]+$","")..filename, "w")
 					
 					assert(f, string.format("could not open `%s' for writing", filename))
@@ -730,11 +816,14 @@ function start (doc)
 			end
 			--print("processing: "..filepath) --TODO DELETE STATIC LOG PRINT
 			--MODIFICATION ///
+      
+      local fname = cutPathToSources(file_doc.name)
 			
 			-- assembly the filename
-			local filename = out_file(file_doc.name:gsub(lfs.currentdir(), ""))
+			local filename = out_file(fname:gsub(lfs.currentdir(), ""))
 
 			logger:info(string.format("generating file `%s'", filename))
+      
 			local f = lfs.open(filename, "w")
 			assert(f, string.format("could not open `%s' for writing", filename))
 			io.output(f)
@@ -751,7 +840,21 @@ function start (doc)
 	local f = lfs.open(options.output_dir.."functionlist/index.html", "w")
 	assert(f, string.format("could not open functionlist/index.html for writing"))
 	io.output(f)
-	include("indexOfFunctions.lp", { doc = doc, functions = functions, metrics = globalMetrics} ) -- -- MODIF (Ivan Simko) - added globalMetrics
+
+	--Create parameter list to make documentation (parameters represents templates)
+	local functionsParam = {
+		doc = doc,
+		functionList = funcTableTemplate.createFunctionTableList(globalMetrics, "functionDefinitions", false),
+		docFunctionList = funcTableTemplate.createDocumentedFunctionTableList(globalMetrics, "functionDefinitions", 1, false),
+		nDocFunctionList = funcTableTemplate.createDocumentedFunctionTableList(globalMetrics, "functionDefinitions", 0, false)
+	}
+
+	--Adding links to templates to make documentation interactive
+	functionsParam.functionList = addLinksToTemplate(functionsParam.functionList)
+	functionsParam.docFunctionList = addLinksToTemplate(functionsParam.docFunctionList)
+	functionsParam.nDocFunctionList = addLinksToTemplate(functionsParam.nDocFunctionList)
+
+	include("indexOfFunctions.lp", functionsParam) -- -- MODIF (Ivan Simko) - added globalMetrics
 	f:close()
 	
 	-- METRICS
@@ -759,9 +862,45 @@ function start (doc)
 	local f = lfs.open(options.output_dir.."metrics/index.html", "w")
 	assert(f, string.format("could not open metrics/index.html for writing"))
 	io.output(f)
-	include("indexOfMetrics.lp", { doc = doc, metrics = globalMetrics, modulenum = #doc.modules , filenum = #doc.files } ) -- MODIF (Ivan Simko) - added globalMetrics
+
+	--Create parameter list to make documentation (parameters represents templates)
+	local metricsParam = {
+		doc = doc,
+		LOCTable = docTemplates.createLOCTable(globalMetrics.LOC, globalMetrics.fileNum, globalMetrics.moduleNum),
+		docMetricsTable = docTemplates.createDocMetricsTable(globalMetrics.documentMetrics),
+		halsteadTable = docTemplates.createHalsteadTable(globalMetrics.halstead),
+		statementsTable = docTemplates.createStatementsTable(globalMetrics.statements),
+		functionsTable = docTemplates.createFunctionsTable(globalMetrics, globalMetrics.fileNum),
+		moduleLenGraph = docTemplates.createModuleLenGraph(globalMetrics, false),
+		fileLenGraph = docTemplates.createFileLenGraph(globalMetrics, false),
+		couplingTable = docTemplates.createCouplingTable(globalMetrics)
+	}
+
+	include("indexOfMetrics.lp", metricsParam ) -- MODIF (Ivan Simko) - added globalMetrics
 	f:close()
 	-- \\\ MODIFICATION ///
+  
+  -- SMELLS - Martin Nagy  
+	local f = lfs.open(options.output_dir.."smells/index.html", "w")
+	assert(f, string.format("could not open smells/index.html for writing"))
+	io.output(f)
+
+	--Create parameter list to make documentation (parameters represents templates)
+	local smellsParam = {
+		doc = doc,
+		longMethodTable = smellTemplates.createLongMethodTable(globalMetrics),
+		cycloTable = smellTemplates.createCycloTable(globalMetrics),
+		manyParamsTable = smellTemplates.createManyParamsTable(globalMetrics),
+		moduleTables = smellTemplates.createModuleTables(globalMetrics),
+		MITable = smellTemplates.createMITable(globalMetrics),
+		longMethodGraph = smellTemplates.createLongMethodGraph(globalMetrics, false),
+		cycloGraph = smellTemplates.createCycloGraph(globalMetrics, false),
+		manyParamsGraph = smellTemplates.createManyParamsGraph(globalMetrics, false) 
+	}
+
+	include("indexOfSmells.lp", smellsParam ) 
+	f:close()
+  -- END OF SMELLS
 
 
 	-- /// MODIFICATION \\\
@@ -770,7 +909,20 @@ function start (doc)
 	local f = lfs.open(options.output_dir.."tablelist/index.html", "w")
 	assert(f, string.format("could not open tablelist/index.html for writing"))
 	io.output(f)
-	include("indexOfTables.lp", { doc = doc, tables = tables, metrics = globalMetrics} )
+
+	--Create parameter list to make documentation (parameters represents templates)
+	local tableParam = {
+		doc = doc,
+		tableList = funcTableTemplate.createFunctionTableList(globalMetrics, "tables", false),
+		docTableList = funcTableTemplate.createDocumentedFunctionTableList(globalMetrics, "tables", 1, false),
+		nDocTableList = funcTableTemplate.createDocumentedFunctionTableList(globalMetrics, "tables", 0, false)
+	} 
+
+	tableParam.tableList = addLinksToTemplate(tableParam.tableList)
+	tableParam.docTableList = addLinksToTemplate(tableParam.docTableList)
+	tableParam.nDocTableList = addLinksToTemplate(tableParam.nDocTableList)
+
+	include("indexOfTables.lp", tableParam)
 	f:close()
 	-- \\\ MODIFICATION ///
 
@@ -780,7 +932,19 @@ function start (doc)
 	local f = lfs.open(options.output_dir.."customcommentlist/customs.html", "w")
 	assert(f, string.format("could not open customcommentlist/customs.html for writing"))
 	io.output(f)
-	include("custom.lp", { doc = doc,tables=tables, metrics = globalMetrics} )
+
+	--Create parameter list to make documentation (parameters represents templates)
+	local customParam = {
+		doc = doc,
+		todoComments = luadocerTemplates.createCustomCommentList(doc, "todo", file_link),
+		bugComments = luadocerTemplates.createCustomCommentList(doc, "bug", file_link),
+		questionComments = luadocerTemplates.createCustomCommentList(doc, "question", file_link),
+		fixmeComments = luadocerTemplates.createCustomCommentList(doc, "fixme", file_link),
+		infoComments = luadocerTemplates.createCustomCommentList(doc, "info", file_link),
+		howComments = luadocerTemplates.createCustomCommentList(doc, "how", file_link)
+	}
+
+	include("custom.lp", customParam)
 	f:close()
 	-- \\\ MODIFICATION ///
 
@@ -798,7 +962,15 @@ function start (doc)
 	local f = lfs.open(options.output_dir.."diagram/index.html", "w")
 	assert(f, string.format("could not open diagram/index.html for writing"))
 	io.output(f)
-	include("indexOfDiagrams.lp", { doc = doc, diagrams = diagram_results} ) -- -- MODIF (Ivan Simko) - added globalMetrics
+
+	--Create parameter list to make documentation (parameters represents templates)
+	local diagramParam = {
+		doc = doc,
+		globalDiagram = luadocerTemplates.createUMLDiagrams(diagram_results, true, link),
+		functionDiagram = luadocerTemplates.createUMLDiagrams(diagram_results, false, link)
+	}
+
+	include("indexOfDiagrams.lp", diagramParam ) -- -- MODIF (Ivan Simko) - added globalMetrics
 	f:close()
 
 
@@ -812,4 +984,5 @@ function start (doc)
 	file_copy("jquery-ui.min.js")
 	file_copy("indexOfFunctions.css")
 	file_copy("jquery-ui-1.8.11.custom.css")	
+	file_copy("fileIcon.jpg")	
 end

@@ -108,6 +108,7 @@ end
 	<li><a href="<%=luadoc.doclet.html.link("functionlist/index.html", from)%>">List of functions</a></li>
 	<li><a href="<%=luadoc.doclet.html.link("tablelist/index.html", from)%>">List of tables</a></li>
 	<li><a href="<%=luadoc.doclet.html.link("metrics/index.html", from)%>">Project metrics</a></li>
+	<li><a href="<%=luadoc.doclet.html.link("smells/index.html", from)%>">Project code quality</a></li>
 	<li><a href="<%=luadoc.doclet.html.link("customcommentlist/customs.html",from)%>">Informational comments</a></li>
 	<%if doc.check then%>
 	<li><a href="<%=luadoc.doclet.html.link("check/index.html",from)%>">Static analysis</a></li>

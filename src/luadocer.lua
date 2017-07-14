@@ -128,6 +128,7 @@ local function process_options (arg)
 		end
 		i = i+1
 	end
+	options.files = files
 	return files, options
 end 
 

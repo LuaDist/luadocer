@@ -7,6 +7,7 @@ for fileName, AST in pairs(globalMetrics.file_AST_list) do
 	for exec, moduleRef in pairs(AST.metrics.moduleDefinitions) do
 		if (moduleRef.moduleName == module_doc.name) then
 			defined_in_file = fileName
+			defined_in_file = luadoc.doclet.html.cutPathToSources(defined_in_file)
 			done = true
 			break
 		end
