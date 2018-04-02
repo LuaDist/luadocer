@@ -30,6 +30,7 @@
 		<li><a href="#moduleSmells"><span>Module Smells</span></a></li>
 		<li><a href="#longMethod"><span>Long Method</span></a></li>
 		<li><a href="#manyParameters"><span>Many Parameters</span></a></li>	
+		<li><a href="#longLines"><span>Long lines</span></a></li>	
 	</ul>
 
     <div id="moduleSmells">
@@ -59,6 +60,7 @@
 							<li><b>Response for module</b> > 5 times the <b>number of methods</b> in the module</li>
 							<li><b>Weighted methods per module</b> > 100</li>
 							<li><b>Number of methods</b> > 40</li>
+							<li><b>Number of long lines</b> > 3</li>
 						</ul>
 					</p>
 					<%=moduleTables%>
@@ -119,6 +121,29 @@
 						<li><b>>10 parameters:</b> Serious code smell detected <font color="red">(Red)</font></li>
 					</ul>
 					<%=manyParamsGraph%>
+					<div style="clear: both;"></div>
+			</div>
+		</span>
+	</div>	
+
+	<div id="longLines">
+		<span class="tohide">
+			<div class='metrics_wrapper'>
+				<h2>Metrics in Code Smells</h2>
+					<div style="float:left; width: 330px;">
+						<%=longLinesTable%>
+					</div>
+					<div style="clear:both;"></div>
+					<br />
+				<h2>Graphical representation</h2>
+					<hr/>
+					<p>Criteria for detecting long lines code smell</p>
+					<ul>
+						<li><b><2 parameters:</b> No smell detected <font color="green">(Green)</font></li>
+						<li><b><7 but >2 parameters:</b> Code smell detected <font color="orange">(Orange)</font></li>
+						<li><b>>7 parameters:</b> Serious code smell detected <font color="red">(Red)</font></li>
+					</ul>
+					<%=longLinesGraph%>
 					<div style="clear: both;"></div>
 			</div>
 		</span>

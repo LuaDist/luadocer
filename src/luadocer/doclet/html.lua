@@ -159,7 +159,7 @@ function include (template, env)
 	local templatepath = search(search_path, templatepath)
 
 	assert(templatepath, string.format("template `%s' not found", template))
-	
+
 	env = env or {}
 	env.table = table
 	env.io = io
@@ -893,9 +893,11 @@ function start (doc)
 		manyParamsTable = smellTemplates.createManyParamsTable(globalMetrics),
 		moduleTables = smellTemplates.createModuleTables(globalMetrics),
 		MITable = smellTemplates.createMITable(globalMetrics),
+		longLinesTable = smellTemplates.createLongLinesTable(globalMetrics, false),
 		longMethodGraph = smellTemplates.createLongMethodGraph(globalMetrics, false),
 		cycloGraph = smellTemplates.createCycloGraph(globalMetrics, false),
-		manyParamsGraph = smellTemplates.createManyParamsGraph(globalMetrics, false) 
+		manyParamsGraph = smellTemplates.createManyParamsGraph(globalMetrics, false),
+		longLinesGraph = smellTemplates.createLongLinesGraph(globalMetrics, false),
 	}
 
 	include("indexOfSmells.lp", smellsParam ) 
