@@ -897,6 +897,7 @@ function start (doc)
 		tablesWithManyFieldsTable = smellTemplates.createTablesWithManyFieldsTable(globalMetrics),
 		functionDepthTable = smellTemplates.createFunctionDepthTable(globalMetrics),
 		tableDepthTable = smellTemplates.createTableDepthTable(globalMetrics),
+		upvaluesTable = smellTemplates.createUpvaluesTable(globalMetrics),
 
 		longMethodGraph = smellTemplates.createLongMethodGraph(globalMetrics, false),
 		cycloGraph = smellTemplates.createCycloGraph(globalMetrics, false),
@@ -905,6 +906,7 @@ function start (doc)
 		tablesWithManyFieldsGraph = smellTemplates.createTablesWithManyFieldsGraph(globalMetrics, false),
 		functionDepthGraph = smellTemplates.createFunctionDepthGraph(globalMetrics, false),
 		tableDepthGraph = smellTemplates.createTableDepthGraph(globalMetrics, false),
+		upvaluesGraph = smellTemplates.createUpvaluesGraph(globalMetrics, false),
 	}
 
 	include("indexOfSmells.lp", smellsParam ) 

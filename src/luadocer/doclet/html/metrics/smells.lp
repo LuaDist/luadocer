@@ -113,5 +113,30 @@
             end %>
         </table>
     </div>
+    <div style='float: left; margin-right: 20px;'>
+        <h3>Upvalues</h3>
+        <table class="metric_index">
+            <tr>
+                <th>Function name</th>
+                <th>Number of upvalues</th>
+            </tr>
+             
+            <%
+                for k, v in pairs(globalMetrics.documentSmells.smellsTable) do 
+                    if(filename == v.file) then
+                        for name, count in pairs(v.upvalues.functions) do
+            %>
+                <tr>   
+                    <td><%= name %></td>    
+                    <td><%= count %></td>        
+                </tr>  
+            <%
+                        end
+                    end
+                end
+             %>                  
+
+        </table>
+    </div>
 </div>
 <% end %>

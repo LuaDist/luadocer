@@ -37,3 +37,13 @@ function menu_toggle(obj)
 		obj.innerHTML="[+]";
 	return false;
 }
+
+function parent_toggle(obj)
+{
+	$(obj).next().slideToggle();
+	if(obj.innerHTML=="[+]")
+		obj.innerHTML="[-]";
+	else
+		obj.innerHTML="[+]";
+	return false;
+}

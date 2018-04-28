@@ -18,6 +18,32 @@
 		<br />
 		<%=luadoc.doclet.html.include("metrics/metrics_infoflow.lp", { infoflow = metricsAST.metrics.infoflow })%>
 	</div>
+
+	<div style="float:left; width: 330px;">
+		<table class="metric_index">
+			<tr>
+				<th>Upvalue</th>
+				<th>Number of uses</th>
+			</tr>
+			<% ------- 
+				for _, s in pairs(globalMetrics.documentSmells.smellsTable) do 
+					if(s.file == fileName) then
+						for k, v in pairs(s.upvalues.info) do
+							if(v.functionName == functionName) then
+			%>	
+								<tr>
+									<td class="name"><%= v.varName %></td>
+									<td><%= v.usages %></td>
+								</tr>
+			<% -------
+							end
+						end
+					end
+				end
+			%>
+			
+		</table>
+	</div>
 	
 	<br />
 	<div style="clear:both;"></div>

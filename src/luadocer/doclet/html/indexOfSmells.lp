@@ -34,6 +34,7 @@
 		<li><a href="#tablesWithManyFields"><span>Table with many fields</span></a></li>	
 		<li><a href="#functionDepth"><span>Function depth</span></a></li>	
 		<li><a href="#tableDepth"><span>Table depth</span></a></li>	
+		<li><a href="#upvaluesTable"><span>Upvalues</span></a></li>			
 	</ul>
 
     <div id="moduleSmells">
@@ -142,8 +143,8 @@
 					<hr/>
 					<p>Criteria for detecting long lines code smell</p>
 					<ul>
-						<li><b><2 long lines:</b> No smell detected <font color="green">(Green)</font></li>
-						<li><b><7 but >2 long lines:</b> Code smell detected <font color="orange">(Orange)</font></li>
+						<li><b><2 long lines:</b> Code smell detected <font color="green">(Green)</font></li>
+						<li><b><7 but >2 long lines:</b> Medium code smell detected <font color="orange">(Orange)</font></li>
 						<li><b>>7 long lines:</b> Serious code smell detected <font color="red">(Red)</font></li>
 					</ul>
 					<%=longLinesGraph%>
@@ -163,10 +164,10 @@
 					<br />
 				<h2>Graphical representation</h2>
 					<hr/>
-					<p>Criteria for detecting long lines code smell</p>
+					<p>Criteria for detecting table with many fields code smell</p>
 					<ul>
-						<li><b><2 tables:</b> No smell detected <font color="green">(Green)</font></li>
-						<li><b><7 but >2 tables:</b> Code smell detected <font color="orange">(Orange)</font></li>
+						<li><b><2 tables:</b> Code smell detected <font color="green">(Green)</font></li>
+						<li><b><7 but >2 tables:</b> Medium code smell detected <font color="orange">(Orange)</font></li>
 						<li><b>>7 tables:</b> Serious code smell detected <font color="red">(Red)</font></li>
 					</ul>
 					<%=tablesWithManyFieldsGraph%>
@@ -186,11 +187,11 @@
 					<br />
 				<h2>Graphical representation</h2>
 					<hr/>
-					<p>Criteria for detecting long lines code smell</p>
+					<p>Criteria for detecting function depth code smell</p>
 					<ul>
-						<li><b><2 nested function depth:</b> No smell detected <font color="green">(Green)</font></li>
-						<li><b><7 but >2 nested function depth:</b> Code smell detected <font color="orange">(Orange)</font></li>
-						<li><b>>7 nested function depth:</b> Serious code smell detected <font color="red">(Red)</font></li>
+						<li><b><2 functions:</b> Code smell detected <font color="green">(Green)</font></li>
+						<li><b><7 but >2 functions:</b> Medium code smell detected <font color="orange">(Orange)</font></li>
+						<li><b>>7 functions:</b> Serious code smell detected <font color="red">(Red)</font></li>
 					</ul>
 					<%=functionDepthGraph%>
 					<div style="clear: both;"></div>
@@ -209,17 +210,41 @@
 					<br />
 				<h2>Graphical representation</h2>
 					<hr/>
-					<p>Criteria for detecting long lines code smell</p>
+					<p>Criteria for detecting table depth code smell</p>
 					<ul>
-						<li><b><2 depth of table:</b> No smell detected <font color="green">(Green)</font></li>
-						<li><b><7 but >2 depth of table:</b> Code smell detected <font color="orange">(Orange)</font></li>
-						<li><b>>7 depth of table:</b> Serious code smell detected <font color="red">(Red)</font></li>
+						<li><b><2 tables:</b> Code smell detected <font color="green">(Green)</font></li>
+						<li><b><7 but >2 tables:</b> Medium code smell detected <font color="orange">(Orange)</font></li>
+						<li><b>>7 tables:</b> Serious code smell detected <font color="red">(Red)</font></li>
 					</ul>
 					<%=tableDepthGraph%>
 					<div style="clear: both;"></div>
 			</div>
 		</span>
 	</div>	
+
+	<div id="upvaluesTable">
+		<span class="tohide">
+			<div class='metrics_wrapper'>
+				<h2>Metrics in Code Smells</h2>
+					<div style="float:left; width: 330px;">
+						<%=upvaluesTable%>
+					</div>
+					<div style="clear:both;"></div>
+					<br />
+				<h2>Graphical representation</h2>
+					<hr/>
+					<p>Criteria for detecting upvalues code smell</p>
+					<ul>
+						<li><b><5 variables:</b> Small code smell detected <font color="green">(Green)</font></li>
+						<li><b><10 but >5 variables:</b> Medium code smell detected <font color="orange">(Orange)</font></li>
+						<li><b>>10 variables:</b> Serious code smell detected <font color="red">(Red)</font></li>
+					</ul>
+					<%=upvaluesGraph%>
+					<div style="clear: both;"></div>
+			</div>
+		</span>
+	</div>	
+
 </div>
 
 <% luadoc.doclet.html.include("footer.lp", {doc=doc}) %>
