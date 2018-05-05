@@ -64,7 +64,11 @@
 							<li><b>Response for module</b> > 5 times the <b>number of methods</b> in the module</li>
 							<li><b>Weighted methods per module</b> > 100</li>
 							<li><b>Number of methods</b> > 40</li>
-							<li><b>Number of long lines</b> > 3</li>
+							<li><b>Number of long lines</b> > 10</li>
+							<li><b>Number of tables with many fields</b> > 1</li>
+							<li><b>Number of function with high nesting level</b> > 1</li>
+							<li><b>Number of tables with high nesting level</b> > 1</li>
+							<li><b>Number of upvalues</b> > 5</li>
 						</ul>
 					</p>
 					<%=moduleTables%>

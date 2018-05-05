@@ -138,7 +138,7 @@ end
 		</div>
 <% if(file_doc and file_doc.metricsAST) then %>
 <div class='metrics_wrapper' style='display:none; padding-bottom:10px;'>
-	<% luadoc.doclet.html.include("metrics/metrics_function.lp", { metricsAST = file_doc.metricsAST.luaDoc_functions[func.name], fileAST = file_doc.metricsAST, globalMetrics = globalMetrics, currentModuleName=file_doc.metricsAST.metrics.currentModuleName })%>
+	<% luadoc.doclet.html.include("metrics/metrics_function.lp", { metricsAST = file_doc.metricsAST.luaDoc_functions[func.name], fileAST = file_doc.metricsAST, globalMetrics = globalMetrics, currentModuleName=file_doc.metricsAST.metrics.currentModuleName, fileName = file_doc.name, functionName = func.name })%>
 	<div style='clear:both;'></div>
 	<a href='#' class='toggle_source' onclick="$(this).parent().slideToggle(); return false;">[ hide metrics ]</a>
 </div>

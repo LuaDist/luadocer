@@ -36,7 +36,7 @@
                                     <td><%= tableName %></td>    
                                     <td><%= s.count %></td>        
                                 </tr>
-                <%              break
+                <%              
                             end
                         end
                     else %>
@@ -45,6 +45,7 @@
                             <td>-/-</td>        
                         </tr>
               <%    end
+                    break
                 end
             end %>
         </table>
@@ -68,7 +69,7 @@
                                     <td><%= tableName %></td>    
                                     <td><%= s.level %></td>        
                                 </tr>
-                <%              break
+                <%              
                             end
                         end
                     else %>
@@ -77,6 +78,7 @@
                             <td>-/-</td>        
                         </tr>
               <%    end
+                    break
                 end
             end %>
         </table>
@@ -100,7 +102,7 @@
                                     <td><%= tableName %></td>    
                                     <td><%= s.level %></td>        
                                 </tr>
-                <%              break
+                <%              
                             end
                         end
                     else %>
@@ -109,6 +111,7 @@
                             <td>-/-</td>        
                         </tr>
               <%    end
+                    break
                 end
             end %>
         </table>
