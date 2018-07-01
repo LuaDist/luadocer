@@ -136,6 +136,11 @@ end
 -- Main function. Process command-line parameters and call luadoc processor.
 
 function main (arg)
+
+	-- TODO test
+	package.path = "/home/domco/Desktop/Skola/Repository/luametrics/src/?.lua;/home/domco/Desktop/Skola/Repository/luametrics/src//?/init.lua;" .. package.path
+	--package.cpath = "/home/domco/Desktop/Skola/Repository/luametrics/src/?.so;/home/domco/Desktop/Skola/Repository/luametrics/src/?.dll;/home/domco/Desktop/Skola/Repository/luametrics/src/?/init.so" .. package.cpath
+
 	-- Process options
 	local argc = #arg
 	if argc < 1 then

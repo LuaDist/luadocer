@@ -108,7 +108,7 @@ luadoc.doclet.html.include("header.lp", {title=func.name.."() ["..file_doc.file_
 
 <div class='metrics_wrapper' style="padding-top:10px;">
 	<h2>Metrics</h2>
-	<%= luadoc.doclet.html.include("metrics/metrics_function.lp", {metricsAST = metricsAST.luaDoc_functions[func.name], fileAST = metricsAST , globalMetrics = globalMetrics}) %>
+	<%= luadoc.doclet.html.include("metrics/metrics_function.lp", {metricsAST = metricsAST.luaDoc_functions[func.name], fileAST = metricsAST , globalMetrics = globalMetrics, fileName = file_doc.name, functionName = func.name}) %>
 	<div style='clear:both;'></div>
 	<a href="#" class="toggle_source" onclick="$(this).parent().slideToggle(); return false;">[ hide metrics ]</a>
 </div>

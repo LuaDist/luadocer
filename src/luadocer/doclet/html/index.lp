@@ -14,6 +14,7 @@ Generated <%= os.date("%d.%m.%Y %H:%M:%S") %> by LuaDoc
 <li><a href='functionlist/index.html'>Functions</a></li>
 <li><a href='tablelist/index.html'>Tables</a></li>
 <li><a href='metrics/index.html'>Project metrics</a></li>
+<li><a href='smells/index.html'>Project code quality</a></li>
 <li><a href='customcommentlist/customs.html'>Informational comments</a></li>
 
 <%if doc.check then%>

@@ -30,6 +30,11 @@
 		<li><a href="#moduleSmells"><span>Module Smells</span></a></li>
 		<li><a href="#longMethod"><span>Long Method</span></a></li>
 		<li><a href="#manyParameters"><span>Many Parameters</span></a></li>	
+		<li><a href="#longLines"><span>Long lines</span></a></li>	
+		<li><a href="#tablesWithManyFields"><span>Table with many fields</span></a></li>	
+		<li><a href="#functionDepth"><span>Function depth</span></a></li>	
+		<li><a href="#tableDepth"><span>Table depth</span></a></li>	
+		<li><a href="#upvaluesTable"><span>Upvalues</span></a></li>			
 	</ul>
 
     <div id="moduleSmells">
@@ -59,6 +64,11 @@
 							<li><b>Response for module</b> > 5 times the <b>number of methods</b> in the module</li>
 							<li><b>Weighted methods per module</b> > 100</li>
 							<li><b>Number of methods</b> > 40</li>
+							<li><b>Number of long lines</b> > 10</li>
+							<li><b>Number of tables with many fields</b> > 1</li>
+							<li><b>Number of function with high nesting level</b> > 1</li>
+							<li><b>Number of tables with high nesting level</b> > 1</li>
+							<li><b>Number of upvalues</b> > 5</li>
 						</ul>
 					</p>
 					<%=moduleTables%>
@@ -123,6 +133,122 @@
 			</div>
 		</span>
 	</div>	
+
+	<div id="longLines">
+		<span class="tohide">
+			<div class='metrics_wrapper'>
+				<h2>Metrics in Code Smells</h2>
+					<div style="float:left; width: 330px;">
+						<%=longLinesTable%>
+					</div>
+					<div style="clear:both;"></div>
+					<br />
+				<h2>Graphical representation</h2>
+					<hr/>
+					<p>Criteria for detecting long lines code smell</p>
+					<ul>
+						<li><b><2 long lines:</b> Code smell detected <font color="green">(Green)</font></li>
+						<li><b><7 but >2 long lines:</b> Medium code smell detected <font color="orange">(Orange)</font></li>
+						<li><b>>7 long lines:</b> Serious code smell detected <font color="red">(Red)</font></li>
+					</ul>
+					<%=longLinesGraph%>
+					<div style="clear: both;"></div>
+			</div>
+		</span>
+	</div>	
+
+	<div id="tablesWithManyFields">
+		<span class="tohide">
+			<div class='metrics_wrapper'>
+				<h2>Metrics in Code Smells</h2>
+					<div style="float:left; width: 330px;">
+						<%=tablesWithManyFieldsTable%>
+					</div>
+					<div style="clear:both;"></div>
+					<br />
+				<h2>Graphical representation</h2>
+					<hr/>
+					<p>Criteria for detecting table with many fields code smell</p>
+					<ul>
+						<li><b><2 tables:</b> Code smell detected <font color="green">(Green)</font></li>
+						<li><b><7 but >2 tables:</b> Medium code smell detected <font color="orange">(Orange)</font></li>
+						<li><b>>7 tables:</b> Serious code smell detected <font color="red">(Red)</font></li>
+					</ul>
+					<%=tablesWithManyFieldsGraph%>
+					<div style="clear: both;"></div>
+			</div>
+		</span>
+	</div>	
+
+	<div id="functionDepth">
+		<span class="tohide">
+			<div class='metrics_wrapper'>
+				<h2>Metrics in Code Smells</h2>
+					<div style="float:left; width: 330px;">
+						<%=functionDepthTable%>
+					</div>
+					<div style="clear:both;"></div>
+					<br />
+				<h2>Graphical representation</h2>
+					<hr/>
+					<p>Criteria for detecting function depth code smell</p>
+					<ul>
+						<li><b><2 functions:</b> Code smell detected <font color="green">(Green)</font></li>
+						<li><b><7 but >2 functions:</b> Medium code smell detected <font color="orange">(Orange)</font></li>
+						<li><b>>7 functions:</b> Serious code smell detected <font color="red">(Red)</font></li>
+					</ul>
+					<%=functionDepthGraph%>
+					<div style="clear: both;"></div>
+			</div>
+		</span>
+	</div>	
+
+	<div id="tableDepth">
+		<span class="tohide">
+			<div class='metrics_wrapper'>
+				<h2>Metrics in Code Smells</h2>
+					<div style="float:left; width: 330px;">
+						<%=tableDepthTable%>
+					</div>
+					<div style="clear:both;"></div>
+					<br />
+				<h2>Graphical representation</h2>
+					<hr/>
+					<p>Criteria for detecting table depth code smell</p>
+					<ul>
+						<li><b><2 tables:</b> Code smell detected <font color="green">(Green)</font></li>
+						<li><b><7 but >2 tables:</b> Medium code smell detected <font color="orange">(Orange)</font></li>
+						<li><b>>7 tables:</b> Serious code smell detected <font color="red">(Red)</font></li>
+					</ul>
+					<%=tableDepthGraph%>
+					<div style="clear: both;"></div>
+			</div>
+		</span>
+	</div>	
+
+	<div id="upvaluesTable">
+		<span class="tohide">
+			<div class='metrics_wrapper'>
+				<h2>Metrics in Code Smells</h2>
+					<div style="float:left; width: 330px;">
+						<%=upvaluesTable%>
+					</div>
+					<div style="clear:both;"></div>
+					<br />
+				<h2>Graphical representation</h2>
+					<hr/>
+					<p>Criteria for detecting upvalues code smell</p>
+					<ul>
+						<li><b><5 variables:</b> Small code smell detected <font color="green">(Green)</font></li>
+						<li><b><10 but >5 variables:</b> Medium code smell detected <font color="orange">(Orange)</font></li>
+						<li><b>>10 variables:</b> Serious code smell detected <font color="red">(Red)</font></li>
+					</ul>
+					<%=upvaluesGraph%>
+					<div style="clear: both;"></div>
+			</div>
+		</span>
+	</div>	
+
 </div>
 
 <% luadoc.doclet.html.include("footer.lp", {doc=doc}) %>
